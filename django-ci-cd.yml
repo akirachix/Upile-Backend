@@ -4,6 +4,7 @@ on:
   push:
     branches: 
         - feature/cicd-pipeline
+        - dev
   pull_request:
     branches: 
         - main
