@@ -3,13 +3,12 @@ name: Django CI/CD
 on:
   push:
     branches:
-      - feature/cicd-pipeline
-      - dev
+      - main
+      - staging
   pull_request:
     branches:
       - main
       - staging
-      - dev
 
 jobs:
   build:
