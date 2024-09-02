@@ -1,19 +1,13 @@
 # Description
+What is this?
+A custom CI/CD pipeline automates code integration, testing, and deployment, streamlining the delivery process.
 
-Please include a summary of the change and which issue is fixed. 
-Please also include relevant motivation and context. 
-List any dependencies that are required for this change.
+Why this?
+It boosts efficiency, reduces errors, and speeds up the release of new features.
 
-Perhaps answering the following questions will help create a good description:
-* What is this?
-* Why this?
-* How are you doing this? 
-
-Fixes # (issue) [Provide a link to the related Jira Task]
-
-## Type of change
-
-Specify the kind of PR/MR
+How are you doing this?
+We've created a tailored workflow that automatically triggers builds, runs tests, and deploys applications based on our specific needs.
+Specify the kind of PR/MR.
 
 Please delete options that are not relevant.
 
