@@ -3,6 +3,7 @@ name: Django CI/CD
 on:
   push:
     branches: 
+        - feature/cicd-pipeline
   pull_request:
     branches: 
         - main
@@ -13,17 +14,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-      
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
     - name: Check out repository code
@@ -44,10 +34,5 @@ jobs:
 
     - name: Run tests
       env:
-        DATABASE_URL: postgres://postgres:postgres@localhost/lostlocate
+       
       run: python manage.py test
-
-    - name: Deploy to Production
-      if: github.ref == 'refs/heads/main'
-      run: 
-        echo "Deploying to production..."
