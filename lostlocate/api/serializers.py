@@ -7,7 +7,6 @@ class MortuaryStaffSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = MortuaryStaff
-        # Include all fields from the MortuaryStaff model
         fields = "__all__"
 
 class MinimalMortuaryStaffSerializer(serializers.ModelSerializer):
@@ -16,5 +15,4 @@ class MinimalMortuaryStaffSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = MortuaryStaff
-        # Specify which fields to include in the serialized output
         fields = ["name", "location"]
