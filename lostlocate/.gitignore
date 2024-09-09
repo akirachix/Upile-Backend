@@ -18,3 +18,6 @@ build/
 .vscode/
 # Ignore custom file containing databases
 database_config.py
+
+# Ignore migration files (if not needed)
+migrations/*.py
