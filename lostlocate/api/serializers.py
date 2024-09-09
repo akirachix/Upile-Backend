@@ -4,7 +4,7 @@ from mortuary.models import Mortuary
 from stations.models import PoliceStation
 
 
-# Serializer for PoliceStation model
+"""Serializer for PoliceStation model"""
 class PoliceStationSerializer(serializers.ModelSerializer):
     # officers = PoliceOfficerSerializer(many=True, read_only=True)
     class Meta:
@@ -12,7 +12,7 @@ class PoliceStationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-# Serializer for Mortuary model
+"""Serializer for Mortuary model"""
 class MortuarySerializer(serializers.ModelSerializer):
     # staff = MortuaryStaffSerializer(many=True, read_only=True)
     class Meta:
@@ -20,8 +20,7 @@ class MortuarySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-# Serializer for PoliceOfficer model
+"""Serializer for PoliceOfficer model"""
 class PoliceOfficerSerializer(serializers.ModelSerializer):
     # user = MinimalUserSerializer()
     class Meta:
