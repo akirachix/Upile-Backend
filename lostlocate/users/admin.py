@@ -1,32 +1,111 @@
+# from django.contrib import admin
+# from django.contrib.auth.admin import UserAdmin
+# from .models import CustomUser
+
+# # Custom admin class for managing CustomUser in the Django admin interface
+# class CustomUserAdmin(UserAdmin):
+#     """Specify the model that this admin class manages"""
+#     model = CustomUser
+
+#     # Fields to be displayed in the list view of the admin interface
+#     list_display = (
+#         'email',
+#         'first_name',
+#         'last_name',
+#         'is_staff',
+#         'is_active',
+#         'phone_number',
+#         'role'
+#     )
+
+#     list_filter = (
+#         'is_staff',
+#         'is_superuser',
+#         'is_active',
+#         'groups'
+#     )
+
+#     """ Ordering of users in the list view based on the username"""
+#     ordering = ('role',)
+
+# """ Register the CustomUser model with the CustomUserAdmin class"""
+# admin.site.register(CustomUser, CustomUserAdmin)
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
+
 # Custom admin class for managing CustomUser in the Django admin interface
 class CustomUserAdmin(UserAdmin):
-    model = CustomUser  # Specify the model that this admin class manages
-    
+    """Specify the model that this admin class manages"""
+
+    model = CustomUser
+
     # Fields to be displayed in the list view of the admin interface
     list_display = (
-        'username',  # Username of the user
-        'email',     # Email address of the user
-        'first_name', # First name of the user
-        'last_name',  # Last name of the user
-        'is_staff',   # Indicates if the user is a staff member
-        'is_active',  # Indicates if the user account is active
-        'phone_number', # Phone number of the user
-        'role'        # Role of the user (e.g., police officer, mortuary staff)
+        "email",
+        "first_name",
+        "last_name",
+        "is_staff",
+        "is_active",
+        "phone_number",
+        "role",
     )
-    
+
+    # Fields to filter by in the admin interface
     list_filter = (
-        'is_staff',    # Filter by whether the user is a staff member
-        'is_superuser', # Filter by whether the user is a superuser
-        'is_active',   # Filter by whether the user account is active
-        'groups'       # Filter by user groups
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "groups",
+        "role",  # Add role filter if needed
     )
-    
-    # Ordering of users in the list view based on the username
-    ordering = ('username',)
+
+    # Ordering of users in the list view
+    ordering = ("role",)
+
+    # Fields to be displayed in the detail view (form)
+    fieldsets = (
+        (None, {"fields": ("username", "password")}),
+        (
+            "Personal info",
+            {"fields": ("first_name", "last_name", "email", "phone_number", "role")},
+        ),
+        (
+            "Permissions",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
+    )
+
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "username",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "phone_number",
+                    "role",
+                    "password1",
+                    "password2",
+                ),
+            },
+        ),
+    )
+
 
 # Register the CustomUser model with the CustomUserAdmin class
 admin.site.register(CustomUser, CustomUserAdmin)
