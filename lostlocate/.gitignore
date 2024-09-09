@@ -2,19 +2,41 @@
 venv/
 # Environment variables
 .env
+env/
 # Django
 db.sqlite3
-__pycache__/
 *.pyc
+*.pyo
+*.pyd
+__pycache__/
+__pycache__/*/
+
 # Backup files
 *.bak
+
 # PyCharm
 .idea/
+
+# Ignore logs and other temporary files
+*.log
+*.tmp
+*.pid
+
+# Ignore migration files (if not needed)
+migrations/*.py
+
 # Python Packaginga
 *.egg-info/
 dist/
 build/
+
 # VSCode
 .vscode/
+
 # Ignore custom file containing databases
 database_config.py
+
+
+
+
+
