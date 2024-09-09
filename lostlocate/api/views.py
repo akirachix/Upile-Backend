@@ -72,9 +72,13 @@ class UnidentifiedBodyListView(APIView):
         """Retrieve a list of unidentified bodies."""
         logger.info("Fetching list of unidentified bodies.")
         unidentified_bodies = UnidentifiedBody.objects.all()
+        total_unidentified_bodies = UnidentifiedBody.objects.all().count()
         serializer = UnidentifiedBodySerializer(unidentified_bodies, many=True)
         logger.info("Successfully fetched unidentified bodies data.")
-        return Response(serializer.data)
+        return Response({
+            'total_next_of_kin': total_unidentified_bodies,
+            'next_of_kin': serializer.data
+        })
 
     def post(self, request):
         """Create a new unidentified body entry."""
@@ -99,6 +103,7 @@ class UnidentifiedBodyDetailView(APIView):
         except UnidentifiedBody.DoesNotExist:
             logger.error("Unidentified body with id: %s not found.", id)
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 
     def put(self, request, id):
         """Update a specific unidentified body entry."""
