@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from .serializers import MissingPersonSerializer, MinimalMissingPersonSerializer
 
-# Set up logging
+"""Set up logging"""
 logger = logging.getLogger(__name__)
 
 class MissingPersonListView(APIView):
@@ -58,18 +58,6 @@ class MissingPersonDetailView(APIView):
             else:
                 return Response({"error": "Name query parameter is required for search."}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-    # def get(self, request, id):
-    #     """Retrieve a specific missing person by ID."""
-    #     try:
-    #         missing_person = get_object_or_404(MissingPerson, id=id)
-    #         serializer = MissingPersonSerializer(missing_person)
-    #         return Response(serializer.data)
-    #     except Exception as e:
-    #         logger.error(f"Error retrieving missing person with ID {id}: {e}")
-    #         return Response({"error": "Missing person not found."}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, id):
         """Update a specific missing person record by ID."""
