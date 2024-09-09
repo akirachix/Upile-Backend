@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'rest_framework_simplejwt',
+    'rest_framework',
+    'user',
+    
 ]
 
 MIDDLEWARE = [
@@ -74,9 +79,13 @@ WSGI_APPLICATION = 'lostlocate.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "lostlocate",
+        "USER": "upile",
+        "PASSWORD": "upile@2024",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
     }
 }
 
@@ -121,3 +130,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# SMS Leopard Configuration
+SMS_LEOPARD_API_URL = 'https://api.smsleopard.com/v1/sms/send'
+SMS_LEOPARD_ACCESS_TOKEN = 'alA4aXRHVHc2OG9QUGF2a0dxYVc6M01pSldhYUhDMlF2eVdnNHdYZnpNUjMzQzZZeFNNTVUyQmN4aEhuYg=='
+
+#email credential
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'njungesharonwanjiku@gmail.com'
+EMAIL_HOST_PASSWORD = 'tzus scvf bqyn leej'
