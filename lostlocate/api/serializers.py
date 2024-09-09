@@ -1,15 +1,14 @@
-from rest_framework import serializers  # Importing serializers from Django REST framework
-from next_of_kin.models import NextOfKin  # Importing the NextOfKin model
-from unidentified_bodies.models import UnidentifiedBody  # Importing the UnidentifiedBody model
+from rest_framework import serializers  
+from next_of_kin.models import NextOfKin  
+from unidentified_bodies.models import UnidentifiedBody  
 
-# Serializer for the NextOfKin model
+"""Serializer for the NextOfKin model & UnidentifiedBody model"""
 class NextOfKinSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NextOfKin  # Specify the model to be serialized
-        fields = '__all__'  # Include all fields from the model
+        model = NextOfKin  
+        fields = '__all__'  
 
-# Serializer for the UnidentifiedBody model
 class UnidentifiedBodySerializer(serializers.ModelSerializer):
     class Meta:
-        model = UnidentifiedBody  # Specify the model to be serialized
-        fields = "__all__"  # Include all fields from the model
+        model = UnidentifiedBody  
+        fields = "__all__"  

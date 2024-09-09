@@ -4,14 +4,14 @@ from rest_framework.views import APIView
 from rest_framework import status
 from unidentified_bodies.models import UnidentifiedBody
 from next_of_kin.models import NextOfKin
+from .serializers import UnidentifiedBodySerializer
+from .serializers import NextOfKinSerializer
 import logging  # Importing logging module
 
-# Set up logging
+"""Set up logging"""
 logger = logging.getLogger(__name__)
 
 # Create your views here.
-from .serializers import UnidentifiedBodySerializer
-from .serializers import NextOfKinSerializer
 
 class NextOfKinListView(APIView):
     def get(self, request):
