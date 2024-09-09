@@ -119,7 +119,7 @@ def verify_otp(request):
             if not formatted_number:
                 return Response({'error': 'Invalid phone number format. Please use the format: 0723456789.'}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Retrieving the cached OTP and check if it matches the one provided
+            # Retrievinf the cached OTP and check if it matches the one provided
             cached_otp = cache.get(formatted_number)
             if cached_otp and cached_otp == otp:
                 # Get the user by phone number and mark them as active
