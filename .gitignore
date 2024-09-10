@@ -1,0 +1,7 @@
+
+.env
+__pycache__/
+Upile-Backend/.env
+env/
+bin/
+include/
