@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from missing_persons.models import MissingPerson
 from police.models import PoliceOfficer
 from mortuary.models import Mortuary
 from stations.models import PoliceStation
@@ -6,6 +7,25 @@ from mortuary_staff.models import MortuaryStaff
 from users.models import CustomUser
 from next_of_kin.models import NextOfKin  
 from unidentified_bodies.models import UnidentifiedBody 
+
+
+"""Serializer class to handle full representation of MissingPerson model"""
+
+class MissingPersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        """Define which model this serializer is associated with"""
+        model = MissingPerson
+        """Include all fields of the model in the serialized output"""
+        fields = "__all__"
+
+""" Serializer class to handle a minimal representation of MissingPerson model"""
+class MinimalMissingPersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        """ Define which model this serializer is associated with"""
+        model = MissingPerson
+        """Include only specific fields ('name' and 'age') in the serialized output"""
+        fields = ["name", "age"]
+
 
 
 
