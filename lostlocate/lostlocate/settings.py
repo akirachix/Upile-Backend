@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "unidentified_bodies",
     "next_of_kin",
-    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -137,11 +136,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SMS Leopard Configuration
 
-from decouple import config
-
-SMS_LEOPARD_API_URL = config('SMS_LEOPARD_API_URL', default='https://api.smsleopard.com/v1/sms/send')
-SMS_LEOPARD_ACCESS_TOKEN = config('SMS_LEOPARD_ACCESS_TOKEN', default='alA4aXRHVHc2OG9QUGF2a0dxYVc6M01pSldhYUhDMlF2eVdnNHdYZnpNUjMzQzZZeFNNTVUyQmN4aEhuYg==')
-
+SMS_LEOPARD_API_URL = os.getenv('SMS_LEOPARD_API_URL', 'https://api.smsleopard.com/v1/sms/send')
+SMS_LEOPARD_ACCESS_TOKEN = os.getenv('SMS_LEOPARD_ACCESS_TOKEN', 'alA4aXRHVHc2OG9QUGF2a0dxYVc6M01pSldhYUhDMlF2eVdnNHdYZnpNUjMzQzZZeFNNTVUyQmN4aEhuYg==')
 # email credential
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
