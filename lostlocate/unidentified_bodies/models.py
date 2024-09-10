@@ -36,3 +36,4 @@ class UnidentifiedBody(models.Model):
     def __str__(self):
         """String representation of the UnidentifiedBody instance"""
         return self.name
+

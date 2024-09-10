@@ -24,3 +24,4 @@ class NextOfKin(models.Model):
     def __str__(self):
         """String representation of the NextOfKin instance"""
         return f"{self.first_name} ({self.last_name})"
+
