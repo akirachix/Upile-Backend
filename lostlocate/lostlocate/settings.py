@@ -77,17 +77,18 @@ WSGI_APPLICATION = "lostlocate.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 import os
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST', 'localhost'), 
-        'PORT': os.getenv('DATABASE_PORT', '5432'),       
+        'NAME': os.getenv('DATABASE_NAME', 'lostlocate'),
+        'USER': os.getenv('DATABASE_USER', 'upile'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'upile@2024'),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
+
+
 
 
 # Password validation
@@ -133,14 +134,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SMS Leopard Configuration
 
-SMS_LEOPARD_API_URL = os.getenv('SMS_LEOPARD_API_URL')
-SMS_LEOPARD_ACCESS_TOKEN = os.getenv('SMS_LEOPARD_ACCESS_TOKEN')
+from decouple import config
+
+SMS_LEOPARD_API_URL = config('SMS_LEOPARD_API_URL', default='https://api.smsleopard.com/v1/sms/send')
+SMS_LEOPARD_ACCESS_TOKEN = config('SMS_LEOPARD_ACCESS_TOKEN', default='alA4aXRHVHc2OG9QUGF2a0dxYVc6M01pSldhYUhDMlF2eVdnNHdYZnpNUjMzQzZZeFNNTVUyQmN4aEhuYg==')
 
 # email credential
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 25))  
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False').lower() in ['true', '1', 'yes']
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ['true', '1', 'yes']
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'upile2024@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'sofa ikak dfgr ntyf')
