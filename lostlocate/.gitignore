@@ -13,7 +13,6 @@ staticfiles/
 # Virtual environment
 venv/
 env/
-lostlocate/
 # Environment variables
 .env
 # IDEs and Editors
