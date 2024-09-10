@@ -14,7 +14,7 @@ class MortuaryStaffSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class MinimalMortuaryStaffSerializer(serializers.ModelSerializer):
-    """
+    """db.sqlite3
     Serializer for the MortuaryStaff model that includes only a subset of fields.
     """
     class Meta:
