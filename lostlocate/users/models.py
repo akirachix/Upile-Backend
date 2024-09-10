@@ -108,3 +108,4 @@ class RegistrationCode(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.expires_at
+

@@ -240,3 +240,4 @@ def verify_code(request):
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
