@@ -244,6 +244,9 @@ class PoliceOfficerDetailView(APIView):
         except PoliceOfficer.DoesNotExist:
             """Handle the case where the police officer with the given ID does not exist"""
             return Response({'error': 'Police officer not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+        
 class NextOfKinListView(APIView):
     def get(self, request):
         """Retrieve a list of next of kin."""

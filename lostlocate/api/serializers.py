@@ -17,23 +17,6 @@ class PoliceStationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-"""Serializer for Mortuary model"""
-class MortuarySerializer(serializers.ModelSerializer):
-    # staff = MortuaryStaffSerializer(many=True, read_only=True)
-    class Meta:
-        model = Mortuary
-        fields = "__all__"
-
-        
-"""Serializer for PoliceOfficer model"""
-class PoliceOfficerSerializer(serializers.ModelSerializer):
-    # user = MinimalUserSerializer()
-    class Meta:
-        model = PoliceOfficer
-        fields = "__all__"
- 
-
-
 class MortuaryStaffSerializer(serializers.ModelSerializer):
     """
     Serializer for the MortuaryStaff model that includes all fields.
@@ -50,18 +33,34 @@ class MinimalMortuaryStaffSerializer(serializers.ModelSerializer):
         model = MortuaryStaff
         fields = ["name", "location"]
 
+class MinimalCustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["user_id", "role"] 
+
+
+"""Serializer for Mortuary model"""
+class MortuarySerializer(serializers.ModelSerializer):
+    staff = MortuaryStaffSerializer(many=True, read_only=True)
+    class Meta:
+        model = Mortuary
+        fields = "__all__"
+
+"""Serializer for PoliceOfficer model"""
+class PoliceOfficerSerializer(serializers.ModelSerializer):
+    user = MinimalCustomUserSerializer()
+    class Meta:
+        model = PoliceOfficer
+        fields = "__all__"
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    # officers = PoliceOfficerSerializer(many=True, read_only=True)
+    officers = PoliceOfficerSerializer(many=True, read_only=True)
     class Meta:
         model = CustomUser
         fields = "__all__"
 
 
-class MinimalCustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ["user_id", "role"] 
 
 
 """Serializer for the NextOfKin model & UnidentifiedBody model"""
