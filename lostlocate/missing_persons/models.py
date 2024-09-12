@@ -1,41 +1,56 @@
 from django.db import models
-from django.utils import timezone
-# from police.models import PoliceOfficer
+from django.core.exceptions import ValidationError
+from police.models import PoliceOfficer
 
-# Create your models here.
 class MissingPerson(models.Model):
-    """Attribute for the missing persons added by the police officers"""
+    """Attributes for the missing persons added by the police officers"""
     GENDER_CHOICES = [
         ('male', 'Male'),
         ('female', 'Female'),
         ('other', 'Other'),
     ]
 
-    SKIN_COLOR_CHOICES =[
+    SKIN_COLOR_CHOICES = [
         ('light_skinned', 'Light Skinned'),
         ('dark_skinned', 'Dark Skinned')
     ]
-    EYE_COLOR_CHOICES =[
-        ('black', 'BLACK'),
-        ('brown', 'BROWN')
+
+    EYE_COLOR_CHOICES = [
+        ('black', 'Black'),
+        ('brown', 'Brown')
     ]
-    missing_person_id = models.SmallIntegerField(primary_key=True)
-    # officer_id = models.ForeignKey(PoliceOfficer)
+
+    id = models.SmallIntegerField(primary_key=True)
+    officer_id = models.ForeignKey(PoliceOfficer, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=100, default='Unknown') 
+    last_name = models.CharField(max_length=100, default='Unknown')
     age = models.SmallIntegerField()
     gender = models.CharField(max_length=50, choices=GENDER_CHOICES, default='other')
     contact = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='missing_persons/')
+    image = models.CharField(max_length=50)
     height = models.FloatField()
     weight = models.FloatField()
     hair_color = models.CharField(max_length=50)
-    eye_color = models.CharField(max_length=50, choices=EYE_COLOR_CHOICES,default='black')
-    skin_color = models.CharField(max_length=50,choices=SKIN_COLOR_CHOICES,default='dark_skinned')
-    missing_date = models.DateTimeField()
+    eye_color = models.CharField(max_length=50, choices=EYE_COLOR_CHOICES, default='black')
+    skin_color = models.CharField(max_length=50, choices=SKIN_COLOR_CHOICES, default='dark_skinned')
+    missing_date = models.DateField()
     location = models.CharField(max_length=50)
     clothes_worn = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)    
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        # String representation of the MissingPerson instance, showing the name
+        # Return the full name of the missing person
         return f"{self.first_name} {self.last_name}"
+
+    def clean(self):
+        # Ensure first_name is not just whitespace
+        if not self.first_name.strip():
+            raise ValidationError('First name cannot be blank or whitespace')
+
+        # Additional validations
+        if self.age < 0:
+            raise ValidationError('Age cannot be negative')
+
+    def save(self, *args, **kwargs):
+        self.clean()  # Ensure custom validation is applied
+        super().save(*args, **kwargs)
