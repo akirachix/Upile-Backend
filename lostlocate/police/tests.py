@@ -45,3 +45,4 @@ class PoliceOfficerTests(TestCase):
                 station_id=self.station,
                 generated_code='CODE123'
             )
+

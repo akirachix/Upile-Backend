@@ -96,3 +96,4 @@ class MortuaryStaffModelTest(TestCase):
         )
         with self.assertRaises(ValidationError):
             staff.full_clean()  # Trigger validation
+

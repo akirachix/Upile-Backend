@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 import random
 from django.utils import timezone
 import uuid
+
 class CustomUser(AbstractUser):
     """Choices for the user role"""
     ROLE_CHOICES = [

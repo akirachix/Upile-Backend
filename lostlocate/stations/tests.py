@@ -38,3 +38,4 @@ class PoliceStationModelTest(TestCase):
                 station_name='North Police Station'
             )
             station.full_clean()  # Trigger validation
+

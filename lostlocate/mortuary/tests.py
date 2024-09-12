@@ -1,29 +1,3 @@
-# from django.test import TestCase
-# from mortuary.models import Mortuary
-
-# class MortuaryModelTest(TestCase):
-    
-#     @classmethod
-#     def setUpTestData(cls):
-#         """Create a Mortuary instance for testing."""
-#         cls.mortuary = Mortuary.objects.create(
-#             id=1,
-#             mortuary_name='Central Mortuary',
-#             location='Downtown'
-#         )
-    
-#     def test_mortuary_creation(self):
-#         """Test the creation of a Mortuary instance."""
-#         mortuary = Mortuary.objects.get(id=1)
-#         self.assertEqual(mortuary.mortuary_name, 'Central Mortuary')
-#         self.assertEqual(mortuary.location, 'Downtown')
-    
-#     def test_string_representation(self):
-#         """Test the string representation of a Mortuary instance."""
-#         mortuary = Mortuary.objects.get(id=1)
-#         self.assertEqual(str(mortuary), 'Central Mortuary')
-
-
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from mortuary.models import Mortuary
@@ -114,3 +88,4 @@ class MortuaryModelTest(TestCase):
             location='Suburban'
         )
         self.assertEqual(str(mortuary), '')  # Expect an empty string
+

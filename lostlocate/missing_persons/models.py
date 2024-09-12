@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from police.models import PoliceOfficer
 
 class MissingPerson(models.Model):

@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     'stations',
     'rest_framework',
     'mortuary_staff',
-    'users',
-    'rest_framework_simplejwt',
-    'unidentified_bodies',
-    'next_of_kin',
+    "users",
+    "rest_framework_simplejwt",
+    "unidentified_bodies",
+    "next_of_kin",
     
 ]
 
@@ -61,7 +61,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "lostlocate.urls"
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -81,20 +80,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "lostlocate.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-import os
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'lostlocate'),
-        'USER': os.getenv('DATABASE_USER', 'upile'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'upile@2024'),
-        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.getenv('DATABASE_PORT', '5432'),
-    }
-}
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#database
+
+
 
 
 
@@ -105,14 +95,18 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
@@ -125,8 +119,6 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
-USE_I18N = True
-
 USE_TZ = True
 
 
@@ -135,10 +127,13 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
 
 # SMS Leopard Configuration
 

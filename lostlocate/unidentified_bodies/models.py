@@ -1,8 +1,9 @@
 from django.db import models
-from django.utils import timezone
+from django.utils import timezone 
 from mortuary_staff.models import MortuaryStaff  
 
 # Create your models here.
+
 
 class UnidentifiedBody(models.Model):
     """

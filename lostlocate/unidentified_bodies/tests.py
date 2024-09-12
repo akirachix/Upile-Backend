@@ -106,3 +106,4 @@ class UnidentifiedBodyModelTest(TestCase):
                 clothes_worn="Green dress",
                 hair_color="Blonde"
             )
+

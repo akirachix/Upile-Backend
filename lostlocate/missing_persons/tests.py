@@ -99,3 +99,4 @@ class MissingPersonTests(TestCase):
         missing_person = MissingPerson(**missing_person_data)
         with self.assertRaises(ValidationError):
             missing_person.full_clean()  # This triggers validation
+

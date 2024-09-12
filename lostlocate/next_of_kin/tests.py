@@ -123,3 +123,4 @@ class NextOfKinTests(TestCase):
             **{**self.valid_next_of_kin_data, 'alternative_contact': 'Unknown'}  # Default value
         )
         self.assertEqual(next_of_kin.alternative_contact, 'Unknown')
+
