@@ -71,12 +71,3 @@ __pycache__/
 # Ignore Django migration files
 **/migrations/*.pyc
 **/migrations/__pycache__/
-
-
-
-
-
-
-# Ignore Django migration files
-**/migrations/*.pyc
-**/migrations/__pycache__/
