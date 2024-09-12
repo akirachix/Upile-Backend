@@ -3,3 +3,4 @@ from .models import NextOfKin
 
 # Register your models here.
 admin.site.register(NextOfKin)
+

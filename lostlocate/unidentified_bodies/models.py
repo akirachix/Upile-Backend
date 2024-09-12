@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-# from mortuary_staff.models import MortuaryStaff  
+from mortuary_staff.models import MortuaryStaff  
 
 # Create your models here.
 
@@ -19,8 +19,8 @@ class UnidentifiedBody(models.Model):
         ('dark_skinned', 'Dark Skinned')
     ]
 
-    body_id = models.SmallIntegerField(primary_key=True)  
-    # mortuary_staff_id = models.ForeignKey(MortuaryStaff, on_delete=models.CASCADE)  
+    id = models.SmallIntegerField(primary_key=True)  
+    staff_id = models.ForeignKey(MortuaryStaff, on_delete=models.CASCADE)  
     name = models.CharField(max_length=50)  
     gender = models.CharField(max_length=50)  
     location = models.CharField(max_length=50)  
