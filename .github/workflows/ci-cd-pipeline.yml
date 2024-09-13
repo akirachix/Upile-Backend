@@ -24,14 +24,16 @@ jobs:
           python-version: '3.10.12'
           
       - name: Install dependencies
-        run: 
-          pip install -r lostlocate/requirements.txt
-
+        run: pip install -r lostlocate/requirements.txt
+  
       - name: Run migrations
-        run: python lostlocate/manage.py migrate
+        run: 
+             python3 lostlocate/manage.py migrate
 
       - name: Run tests
-        run: python lostlocate/manage.py test
-      - name: format code with  Black
+        run:  python3 lostlocate/manage.py test
+      - name: format using Black
         run: |
            black .
+ 
+
