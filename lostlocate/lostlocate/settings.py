@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-0_*oa%3t^pml0^zga1+*2ac1=d$v!lf#jo0%w3y*fx!-=)=&e%
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['lostlocate.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -61,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 ROOT_URLCONF = "lostlocate.urls"
@@ -132,7 +133,7 @@ USE_TZ = True
 # import dj_database_url
 import os
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
