@@ -15,7 +15,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# from dotenv import load_dotenv
 
+# load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -25,7 +27,8 @@ SECRET_KEY = "django-insecure-0_*oa%3t^pml0^zga1+*2ac1=d$v!lf#jo0%w3y*fx!-=)=&e%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = ['lostlocate.herokuapp.com', 'localhost']
 
 
 # Application definition
@@ -125,7 +128,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+
+# import dj_database_url
+import os
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 # Default primary key field type
@@ -157,3 +165,7 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'upile2024@gmail.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'sofa ikak dfgr ntyf')
 
 
+AUTH_USER_MODEL = "users.CustomUser"
+
+import django_heroku
+django_heroku.settings(locals())

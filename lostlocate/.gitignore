@@ -84,31 +84,3 @@ __pycache__/
 # Ignore Django migration files
 **/migrations/*.pyc
 **/migrations/__pycache__/
-
-
-
-
-
-
-*.py[cod]
-**/__pycache__/
-db.sqlite3
-__pycache__
-db.sqlite3
-db.sqlite3
-# Ignore Python bytecode files
-*.pyc
-# Ignore .pyc files in migration directories
-*/migrations/*.pyc
-# Ignore Python bytecode files
-*.pyc
-# Ignore Python bytecode files
-*.pyc
-# Ignore .pyc files in migration directories
-*/migrations/*.pyc
-# Ignore Python bytecode files
-*.pyc
-__pycache__/
-# Ignore Django migration files
-**/migrations/*.pyc
-**/migrations/__pycache__/

@@ -1,12 +1,3 @@
-
-import logging
-from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from missing_persons.models import MissingPerson
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
-from .serializers import MissingPersonSerializer, MinimalMissingPersonSerializer
 import logging
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -14,137 +5,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
-from mortuary.models import Mortuary
-from police.models import PoliceOfficer
-from stations.models import PoliceStation
-from .serializers import (
-    PoliceStationSerializer,
-    MortuarySerializer,
-    PoliceOfficerSerializer
-)
-from rest_framework.exceptions import NotFound
-from mortuary_staff.models import MortuaryStaff
-from .serializers import MortuaryStaffSerializer, MinimalMortuaryStaffSerializer
-from users.models import CustomUser
-from .serializers import CustomUserSerializer
-from unidentified_bodies.models import UnidentifiedBody
-from next_of_kin.models import NextOfKin
-from .serializers import UnidentifiedBodySerializer
-from .serializers import NextOfKinSerializer
-import logging  # Importing logging module
-
-
-
-"""Set up logging"""
-logger = logging.getLogger(__name__)
-
-
-class MissingPersonListView(APIView):
-    
-    def get(self, request):
-        """Retrieve a list of all missing persons."""
-        missing_people = MissingPerson.objects.all()
-        """Total number of missing persons"""
-        total_missing_persons = MissingPerson.objects.all().count()
-        serializer = MinimalMissingPersonSerializer(missing_people, many=True)
-        return Response({
-            'total_missing_persons': total_missing_persons,
-            'missing_persons': serializer.data
-        })
-
-    def post(self, request):
-        """Create a new missing person record."""
-        serializer = MissingPersonSerializer(data=request.data)
-
-
-# View to handle listing and creating MortuaryStaff instances
-class MortuaryStaffListView(APIView):
-    
-    def get(self, request):
-        """
-        Handle GET requests to retrieve a list of all MortuaryStaff.
-        """
-        staff = MortuaryStaff.objects.all()
-        serializer = MinimalMortuaryStaffSerializer(staff, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        """
-        Handle POST requests to create a new MortuaryStaff instance.
-        """
-        serializer = MortuaryStaffSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get_staff_count(self, request):
-        """
-        Handle GET requests to retrieve the count of all MortuaryStaff instances.
-        """
-        count = MortuaryStaff.objects.count()
-        return Response({'staff_count': count})
-
-# View to handle retrieving, updating MortuaryStaff instances
-class MortuaryStaffDetailView(APIView):
-    
-    def get_object(self, id):
-        """
-        Retrieve a MortuaryStaff instance by its ID.
-        """
-        try:
-            return MortuaryStaff.objects.get(id=id)
-        except MortuaryStaff.DoesNotExist:
-            raise NotFound(detail="MortuaryStaff not found.")
-
-    def get(self, request, id):
-        """
-        Handle GET requests to retrieve a single MortuaryStaff instance.
-        """
-        staff = self.get_object(id)
-        serializer = MortuaryStaffSerializer(staff)
-        return Response(serializer.data)
-
-    def put(self, request, id):
-        """
-        Handle PUT requests to update an existing MortuaryStaff instance.
-        """
-        staff = self.get_object(id)
-        serializer = MortuaryStaffSerializer(staff, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-class CustomUserDetailView(APIView):
-    def get(self, request, id):
-        try:
-            user = CustomUser.objects.get(id=id)  
-            serializer = CustomUserSerializer(user) 
-            return Response(
-                serializer.data, status=status.HTTP_200_OK
-            )
-        except CustomUser.DoesNotExist:
-            return Response(
-                {"error": "User not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-
-    def put(self, request, id):
-        try:
-            user = CustomUser.objects.get(id=id)
-            serializer = CustomUserSerializer(user, data=request.data)     
-            if serializer.is_valid():
-                serializer.save()              
-                return Response(serializer.data, status=status.HTTP_200_OK)          
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)     
-        except CustomUser.DoesNotExist:
-            return Response(
-                {"error": "User not found."}, status=status.HTTP_404_NOT_FOUND
-            )
 
 from .serializers import (
     PoliceStationSerializer,
@@ -167,7 +27,6 @@ from stations.models import PoliceStation
 from missing_persons.models import MissingPerson
 
 
-import logging  # Importing logging module
 
 
 """Set up logging"""
