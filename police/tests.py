@@ -17,6 +17,7 @@ class PoliceOfficerTests(TestCase):
         generated_code='123456'  # Ensure this is not null if required
     )
         self.station = PoliceStation.objects.create(
+            station_id = 1,
             station_name='Central Station',
             location='Downtown'
         )
