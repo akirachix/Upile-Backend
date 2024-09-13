@@ -7,7 +7,7 @@ class PoliceStationModelTest(TestCase):
     def setUp(self):
         """Set up test data for the PoliceStation model."""
         self.station = PoliceStation.objects.create(
-            station_id = 1
+            station_id = 1,
             station_name='Central Police Station',
             location='Downtown'
         )

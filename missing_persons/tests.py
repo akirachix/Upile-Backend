@@ -21,6 +21,7 @@ class MissingPersonTests(TestCase):
 
         # Create a PoliceStation instance
         self.station = PoliceStation.objects.create(
+            station_id = 1,
             station_name='Central Station',
             location='Downtown'
         )
