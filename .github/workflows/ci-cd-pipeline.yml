@@ -28,10 +28,10 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: Run migrations
-        run: Upile-Backend/lostlocate python3 manage.py migrate
+        run:  python3 lostlocate/manage.py migrate
 
       - name: Run tests
-        run: Upile-Backend/lostlocate python3 manage.py test
+        run:  python3 lostlocate/manage.py test
       - name: Install Black
         run: |
            black .
