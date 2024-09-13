@@ -169,4 +169,4 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'sofa ikak dfgr ntyf')
 AUTH_USER_MODEL = "users.CustomUser"
 
 import django_heroku
-django_heroku.settings(locals())
+django_heroku.settings(locals()),
