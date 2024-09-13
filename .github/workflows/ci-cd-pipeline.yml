@@ -32,6 +32,6 @@ jobs:
 
       - name: Run tests
         run: python manage.py test
-      - name: format code with  Black
+      - name: format code with black
         run: |
            black .
