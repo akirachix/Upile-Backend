@@ -28,10 +28,10 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: Run migrations
-        run: python manage.py migrate
+        run: python3 manage.py migrate
 
       - name: Run tests
-        run: python manage.py test
+        run: python3 manage.py test
       - name: Install Black
         run: |
            black .
@@ -39,10 +39,4 @@ jobs:
         id: action_black
         run: |
           black .
-      - name: Run migrations
-        run: |
-          python manage.py migrate
-      - name: Run tests
-        run: |
-          python manage.py test
       
