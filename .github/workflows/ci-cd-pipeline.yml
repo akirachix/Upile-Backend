@@ -25,13 +25,13 @@ jobs:
           
       - name: Install dependencies
         run: 
-          pip install -r lostlocate/requirements.txt
+          pip install -r requirements.txt
 
       - name: Run migrations
-        run: python lostlocate/manage.py migrate
+        run: python manage.py migrate
 
       - name: Run tests
-        run: python lostlocate/manage.py test
+        run: python manage.py test
       - name: format code with  Black
         run: |
            black .
