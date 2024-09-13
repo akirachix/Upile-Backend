@@ -139,16 +139,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 import os
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'lostlocate'),
-        'USER': os.getenv('DATABASE_USER', 'upile'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'upile@2024'),
-        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
-        'PORT': os.getenv('DATABASE_PORT', '5432'),
-        'TEST':{
-            'NAME': 'test_lostlocate',
-        }
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
