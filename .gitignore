@@ -41,6 +41,7 @@ venv/
 env/
 env/
 env/
+env1/
 # Environment variables
 .env
 # IDEs and Editors

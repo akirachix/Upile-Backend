@@ -147,23 +147,32 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # SMS Leopard Configuration
 
 import os
+import dj_database_url
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
-# SMS Leopard Configuration
-SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL', 'https://api.smsleopard.com/v1/sms/send')
-SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN', 'alA4aXRHVHc2OG9QUGF2a0dxYVc6M01pSldhYUhDMlF2eVdnNHdYZnpNUjMzQzZZeFNNTVUyQmN4aEhuYg==')
+# Fallback for local development and test environments
+if not os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# SMS Leopard Configuration
+SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL',"")
+SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN',"")
+
+EMAIL_BACKEND = ('EMAIL_BACKEND', "")
+EMAIL_HOST = os.getenv('EMAIL_HOST',"")
+EMAIL_PORT = int(os.getenv('EMAIL_PORT',587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ['true', '1', 'yes']
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'upile2024@gmail.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'sofa ikak dfgr ntyf')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER',"")
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD',"")
 
 
 AUTH_USER_MODEL = "users.CustomUser"
