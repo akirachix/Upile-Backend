@@ -168,7 +168,7 @@ SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL',"")
 SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN',"")
 
 EMAIL_BACKEND = ('EMAIL_BACKEND', "")
-EMAIL_HOST = os.getenv('EMAIL_HOST',"")
+EMAIL_HOST = os.getenv('EMAIL_HOST',587)
 EMAIL_PORT = int(os.getenv('EMAIL_PORT',""))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ['true', '1', 'yes']
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER',"")
