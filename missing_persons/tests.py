@@ -20,7 +20,8 @@ class MissingPersonTests(TestCase):
         )
 
         # Create a PoliceStation instance
-        self.station = PoliceStation.objects.create(
+        self.police_station = PoliceStation.objects.create(
+            station_id = 1,
             station_name='Central Station',
             location='Downtown'
         )
@@ -30,7 +31,7 @@ class MissingPersonTests(TestCase):
             user_id=self.user,  # Assign the CustomUser instance
             rank='Sergeant',
             contact='1234567890',
-            station_id=self.station,  # Assign the PoliceStation instance
+            station_id=self.police_station,  # Assign the PoliceStation instance
             generated_code='CODE123'
         )
 

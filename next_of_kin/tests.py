@@ -20,6 +20,7 @@ class NextOfKinTests(TestCase):
         )
 
         self.station = PoliceStation.objects.create(
+            station_id = 1,
             station_name='Central Station',
             location='Downtown'
         )
