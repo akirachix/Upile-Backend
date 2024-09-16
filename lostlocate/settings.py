@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "unidentified_bodies",
     "next_of_kin",
+    'drf_yasg',
     
 ]
 
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 
 ]
 
@@ -167,7 +169,7 @@ if not os.getenv('DATABASE_URL'):
 SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL',"")
 SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN',"")
 
-EMAIL_BACKEND = ('EMAIL_BACKEND', "")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST',"")
 EMAIL_PORT = int(os.getenv('EMAIL_PORT',587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() in ['true', '1', 'yes']
