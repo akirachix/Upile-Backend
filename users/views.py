@@ -156,10 +156,10 @@ def user_register(request, length=6):
     role = request.data.get("role")
     phone_number = request.data.get("phone_number")
     email = request.data.get("email")
-    user_id = request.data.get("user_id")
+    username = request.data.get("username")
 
 
-    existing_user = CustomUser.objects.filter(email=email, user_id=user_id)
+    existing_user = CustomUser.objects.filter(email=email, username=username)
     if existing_user:
         return Response({"message":"User already exists"})
     else:
@@ -169,11 +169,11 @@ def user_register(request, length=6):
             role=role,
             phone_number=phone_number,
             email=email,
-            user_id = user_id
+            username = username
         )
 
         short_code = generate_short_code(role)
-        
+
         code = RegistrationCode.objects.create(
             user=user,
             code=short_code,
