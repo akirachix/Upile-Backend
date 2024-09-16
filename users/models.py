@@ -17,13 +17,6 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=20)
     """Role field with predefined choices and a default value"""
     email = models.EmailField(unique=True)
-    # def save(self, *args, **kwargs):
-    #     """Hash the password if it does not start with specific prefixes"""
-    #     if not self.password.startswith(("po1234_", "mo1234")):
-    #         self.password = make_password(self.password)
-    #     super().save(*args, **kwargs)
-    # def __str__(self):
-    #     return f"{self.username}"
     """OTP field to store generated code"""
     generated_code = models.CharField(max_length=6)
     """ Phone number field with unique constraint"""

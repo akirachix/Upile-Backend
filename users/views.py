@@ -156,45 +156,43 @@ def user_register(request, length=6):
     role = request.data.get("role")
     phone_number = request.data.get("phone_number")
     email = request.data.get("email")
+    username = request.data.get("username")
 
-    """Basic validation to check if email, username, and role are provided"""
-    existing_user = CustomUser.objects.filter(phone_number=phone_number)
-    if not existing_user:
 
-        """Create or get the user"""
-        user = CustomUser(
+    existing_user = CustomUser.objects.filter(email=email, username=username)
+    if existing_user:
+        return Response({"message":"User already exists"})
+    else:
+        user = CustomUser.objects.create(
             first_name=first_name,
             last_name=last_name,
             role=role,
             phone_number=phone_number,
             email=email,
+            username = username
         )
 
         short_code = generate_short_code(role)
 
-        """Generate a registration code for the user"""
-        code = RegistrationCode(
+        code = RegistrationCode.objects.create(
             user=user,
             code=short_code,
             created_at=timezone.now(),
         )
-        """Save the code in the database"""
 
-        """Prepare email details"""
         subject = "Your Registration Code"
-        message = f"Your registration code is {code.code}."
-        from_email = settings.EMAIL_HOST_USER 
-        recipient_list = [email] 
+        message = f"Your registration code is {short_code}."
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [email]  # Ensure this is a list of strings
 
         try:
-            """Attempt to send the email"""
             send_mail(subject, message, from_email, recipient_list)
             return Response(
                 {"message": "Verification code sent successfully."},
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            """Handle any email sending failure"""
+            logger.error(f"Failed to send email: {e}")
             return Response(
                 {"error": f"Failed to send email: {e}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
