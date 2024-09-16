@@ -41,31 +41,13 @@ class UserTests(APITestCase):
             "phone_number": self.valid_phone_number,
             "otp": self.valid_otp
         })
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # self.assertIn("User registered successfully.", response.data["message"])
-    # def test_verify_otp_invalid(self):
-    #     response = self.client.post(reverse('verify_otp'), {
-    #         "phone_number": self.valid_phone_number,
-    #         "otp": self.invalid_otp
-    #     })
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    #     self.assertIn("Invalid OTP or phone number.", response.data["error"])
-    # Test user_register endpoint
     @patch('django.core.mail.send_mail')
     def test_user_register_valid(self, mock_send_mail):
         mock_send_mail.return_value = 1
         response = self.client.post(reverse('register'), self.user_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Verification code sent successfully.", response.data["message"])
-    # def test_user_register_missing_field(self):
-    #     incomplete_data = {
-    #         "first_name": "John",
-    #         "last_name": "Doe",
-    #         "phone_number": self.valid_phone_number,
-    #     }
-    #     response = self.client.post(reverse('register'), incomplete_data)
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    # Test verify_code endpoint
+ 
     def test_verify_code_valid(self):
         user = CustomUser.objects.create(
             first_name="John",
@@ -79,12 +61,4 @@ class UserTests(APITestCase):
             "code": self.valid_code,
             "phone_number": self.valid_phone_number
         })
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertIn("Verification successful.", response.data["message"])
-    # def test_verify_code_invalid(self):
-    #     response = self.client.post(reverse('verify_code'), {
-    #         "code": "wrongcode",
-    #         "phone_number": self.valid_phone_number
-    #     })
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    #     self.assertIn("Invalid code", response.data["error"])
+

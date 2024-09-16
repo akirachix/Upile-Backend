@@ -1,6 +1,5 @@
 
 from django.db import models
-# from django.contrib.auth.models import User  # Import the built-in User model
 from mortuary.models import Mortuary #Import the Mortuary model
 from django.core.exceptions import ValidationError
 from users.models import CustomUser
