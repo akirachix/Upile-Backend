@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from django.shortcuts import render
+from fuzzysearch import find_near_matches
+
 
 from .serializers import (
     PoliceStationSerializer,
@@ -14,7 +16,7 @@ from .serializers import (
     UnidentifiedBodySerializer,
     NextOfKinSerializer,
     MissingPersonSerializer, MinimalMissingPersonSerializer,
-    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer
+    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer,
 )
 from rest_framework.exceptions import NotFound
 from mortuary_staff.models import MortuaryStaff
@@ -67,15 +69,7 @@ class MortuaryStaffListView(APIView):
         serializer = MinimalMortuaryStaffSerializer(staff, many=True)
         return Response(serializer.data)
 
-    # def post(self, request):
-    #     """
-    #     Handle POST requests to create a new MortuaryStaff instance.
-    #     """
-    #     serializer = MortuaryStaffSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class MortuaryStaffListView(APIView):
     
     def post(self, request):
@@ -713,5 +707,35 @@ class UnidentifiedBodyDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         logger.warning("Failed to update unidentified body with id: %s: %s", id, serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
 
 
+class MatchView(APIView):
+    def get(self, request):
+        # 1. Fetch MissingPersons and UnidentifiedBodies
+        missing_persons = MissingPerson.objects.all()
+        unidentified_bodies = UnidentifiedBody.objects.all()
+        # 2. Perform matching
+        matches = []
+        for missing_person in missing_persons:
+            for body in unidentified_bodies:
+                match = self.match_records(missing_person, body)
+                if match:
+                    matches.append(match)
+        # 3. Return JSON response with match results
+        return Response(matches)
+    def match_records(self, missing_person, unidentified_body, threshold=3):
+        # This method handles fuzzy matching between missing persons and unidentified bodies
+        name_matches = find_near_matches(missing_person.name, unidentified_body.name, max_l_dist=threshold)
+        age_matches = abs(missing_person.age - unidentified_body.age) <= threshold
+        description_matches = find_near_matches(missing_person.description, unidentified_body.description, max_l_dist=threshold)
+        # If any match occurs, return the match data
+        if name_matches or age_matches or description_matches:
+            return {
+                'missing_person': MissingPersonSerializer(missing_person).data,
+                'unidentified_body': UnidentifiedBodySerializer(unidentified_body).data,
+                'name_match': bool(name_matches),
+                'age_match': age_matches,
+                'description_match': bool(description_matches)
+            }
+        return None
