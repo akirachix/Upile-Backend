@@ -2,22 +2,33 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from mortuary.models import Mortuary
 from mortuary_staff.models import MortuaryStaff  
+from users.models import CustomUser
 
 class MortuaryStaffModelTest(TestCase):
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(self):
         """Create test data for Mortuary and MortuaryStaff."""
-        cls.mortuary = Mortuary.objects.create(
+        self.mortuary = Mortuary.objects.create(
             id=1,
             mortuary_name='Central Mortuary',
             location='Downtown'
         )
+
+        self.users = CustomUser.objects.create(
+        first_name='Test',
+        last_name='User',
+        email='test@example.com',
+        phone_number='1234567890',
+        role='police_officer',
+        generated_code='123456'  # Ensure this is not null if required
+    )
     
     def test_mortuary_staff_creation(self):
         """Test the creation of a MortuaryStaff instance."""
         staff = MortuaryStaff.objects.create(
-            id=1,
+            staff_id=1,
+            user = self.users,
             position='Pathologist',
             contact='5551234567',
             mortuary_id=self.mortuary,
@@ -31,7 +42,8 @@ class MortuaryStaffModelTest(TestCase):
     def test_string_representation(self):
         """Test the string representation of a MortuaryStaff instance."""
         staff = MortuaryStaff.objects.create(
-            id=2,
+            staff_id=2,
+            user = self.users,
             position='Technician',
             contact='5559876543',
             mortuary_id=self.mortuary,
@@ -44,7 +56,8 @@ class MortuaryStaffModelTest(TestCase):
         
         # Test with missing Mortuary instance
         staff = MortuaryStaff(
-            id=3,
+            staff_id=3,
+            user = self.users,
             position='Technician',
             contact='5559876543',
             mortuary_id=None,  # Invalid data: no Mortuary instance
@@ -55,7 +68,8 @@ class MortuaryStaffModelTest(TestCase):
 
         # Test with invalid contact number
         staff = MortuaryStaff(
-            id=4,
+            staff_id=4,
+            user = self.users,
             position='Receptionist',
             contact='555123',  # Invalid contact number length
             mortuary_id=self.mortuary,
@@ -66,7 +80,8 @@ class MortuaryStaffModelTest(TestCase):
 
         # Test with empty position
         staff = MortuaryStaff(
-            id=5,
+            staff_id=5,
+            user = self.users,
             position='',  # Empty position
             contact='5553219876',
             mortuary_id=self.mortuary,
@@ -77,7 +92,8 @@ class MortuaryStaffModelTest(TestCase):
 
         # Test with position exceeding max_length
         staff = MortuaryStaff(
-            id=6,
+            staff_id=6,
+            user = self.users,
             position='A' * 31,  # Exceeds max_length of 30
             contact='5556543210',
             mortuary_id=self.mortuary,
@@ -88,7 +104,8 @@ class MortuaryStaffModelTest(TestCase):
 
         # Test with generated_code exceeding max_length
         staff = MortuaryStaff(
-            id=7,
+            staff_id=7,
+            user = self.users,
             position='Security Guard',
             contact='5551112233',
             mortuary_id=self.mortuary,

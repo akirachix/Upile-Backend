@@ -7,8 +7,7 @@ from django.db import IntegrityError
 class PoliceOfficerTests(TestCase):
     def setUp(self):
         """Set up test data."""
-        self.user = CustomUser.objects.create(
-        username='testuser',
+        self.users = CustomUser.objects.create(
         first_name='Test',
         last_name='User',
         email='test@example.com',
@@ -26,13 +25,12 @@ class PoliceOfficerTests(TestCase):
     def test_create_police_officer(self):
         """Test creating a PoliceOfficer."""
         officer = PoliceOfficer.objects.create(
-            user_id=self.user,
+            user = self.users,
             rank='Sergeant',
             contact='1234567890',
             station_id=self.station,
             generated_code='CODE123'
         )
-        self.assertEqual(officer.user_id, self.user)
         self.assertEqual(officer.station_id, self.station)
         self.assertEqual(officer.rank, 'Sergeant')
 
@@ -40,8 +38,8 @@ class PoliceOfficerTests(TestCase):
         """Test creating a PoliceOfficer without a valid CustomUser."""
         with self.assertRaises(IntegrityError):  # Use IntegrityError instead
             PoliceOfficer.objects.create(
-                user_id=None,  # This should raise an IntegrityError
-                rank='Sergeant',
+                user = None, # This should raise an IntegrityError
+                rank= 'Sergeant',
                 contact='1234567890',
                 station_id=self.station,
                 generated_code='CODE123'

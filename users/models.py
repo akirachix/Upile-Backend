@@ -10,14 +10,8 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ("police_officer", "Police Officer"),
         ("mortuary_staff", "Mortuary Staff"),
-    ]
-    user_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=20)
-    """Phone number field with unique constraint"""
-    last_name = models.CharField(max_length=20)
-    """Role field with predefined choices and a default value"""
-    email = models.EmailField(unique=True)
-    """OTP field to store generated code"""
+    ] 
+   
     generated_code = models.CharField(max_length=6)
     """ Phone number field with unique constraint"""
     phone_number = models.CharField(max_length=15, unique=True)
@@ -31,13 +25,14 @@ class CustomUser(AbstractUser):
             self.generated_code = self.generate_code()
         """Call the parent class's save method"""
         super().save(*args, **kwargs)
+
     """Generate a random 6-digit code for OTP"""
     def generate_code(self):
         """Generates a random 6-digit code"""
         return str(random.randint(100000, 999999))
     """String representation of the user, showing full name and role"""
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.role}"
+        return f"{self.first_name}"
     """Check if the user has the specified permission based on their role"""
     def has_permission(self, permission):
         if self.role == "police_officer":
