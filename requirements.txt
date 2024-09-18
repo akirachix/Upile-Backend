@@ -20,6 +20,8 @@ whitenoise==6.7.0
 black==24.8.0
 dj-database-url==2.2.0
 drf-yasg==1.21.7
+attrs==24.2.0 
+fuzzysearch==0.7.3
 
 
 

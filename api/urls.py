@@ -2,6 +2,7 @@ from django.urls import path
 from .views import MissingPersonDetailView, MissingPersonListView
 from .views import NextOfKinDetailView, NextOfKinListView
 from .views import UnidentifiedBodyListView, UnidentifiedBodyDetailView
+from .views import MatchView
 from . import views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -32,6 +33,8 @@ urlpatterns = [
     path('unidentified_bodies/<int:pk>/', UnidentifiedBodyDetailView.as_view(), name='unidentified_body_detail_view'),
     path('nextofkin/<int:pk>/', NextOfKinDetailView.as_view(), name='nextofkin-detail'),
     path('nextofkin/', NextOfKinListView.as_view(), name='nextofkin-list'),
+    path('matches/', MatchView.as_view(), name='matches'),
+
     # Swagger and Redoc URLs
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

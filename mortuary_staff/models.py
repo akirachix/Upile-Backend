@@ -9,8 +9,8 @@ class MortuaryStaff(models.Model):
     """
     Model representing staff members working at a mortuary.
     """
-    id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
+    staff_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     position = models.CharField(max_length=30)
     contact = models.CharField(max_length=15)
     mortuary_id = models.ForeignKey(Mortuary, on_delete=models.CASCADE)
@@ -39,4 +39,4 @@ class MortuaryStaff(models.Model):
         """
         String representation of the MortuaryStaff object.
         """
-        return f"Staff {self.id} - {self.position}"
+        return f"Staff {self.staff_id} - {self.position}"

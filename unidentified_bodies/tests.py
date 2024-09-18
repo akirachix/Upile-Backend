@@ -6,6 +6,7 @@ from django.utils import timezone
 from mortuary_staff.models import MortuaryStaff
 from unidentified_bodies.models import UnidentifiedBody
 from mortuary.models import Mortuary
+from users.models import CustomUser
 
 class UnidentifiedBodyModelTest(TestCase):
     def setUp(self):
@@ -16,9 +17,19 @@ class UnidentifiedBodyModelTest(TestCase):
             location="Downtown"
         )
 
+        self.users = CustomUser.objects.create(
+        first_name='Test',
+        last_name='User',
+        email='test@example.com',
+        phone_number='1234567890',
+        role='police_officer',
+        generated_code='123456'  # Ensure this is not null if required
+    )
+
         # Setup a MortuaryStaff instance
         self.staff = MortuaryStaff.objects.create(
-            id=1,
+            staff_id=1,
+            user = self.users,
             position="Mortuary Staff",
             contact="0701234567",
             mortuary_id=self.mortuary,  # Use Mortuary instance
@@ -81,7 +92,8 @@ class UnidentifiedBodyModelTest(TestCase):
         # Unhappy Path Test: Test for invalid staff_id (foreign key constraint)
         # Create a valid MortuaryStaff instance
         valid_staff = MortuaryStaff.objects.create(
-            id=2,
+            staff_id=2,
+            user = self.users,
             position="Another Staff",
             contact="0707654321",
             mortuary_id=self.mortuary,

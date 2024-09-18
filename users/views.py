@@ -164,12 +164,13 @@ def user_register(request, length=6):
         return Response({"message":"User already exists"})
     else:
         user = CustomUser.objects.create(
+            username = username,
             first_name=first_name,
             last_name=last_name,
             role=role,
             phone_number=phone_number,
             email=email,
-            username = username
+            
         )
 
         short_code = generate_short_code(role)
