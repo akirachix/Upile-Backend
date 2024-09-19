@@ -20,7 +20,7 @@ class MissingPerson(models.Model):
         ('brown', 'Brown')
     ]
 
-    id = models.SmallIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     officer_id = models.ForeignKey(PoliceOfficer, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100, default='Unknown')
