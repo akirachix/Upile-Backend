@@ -10,8 +10,7 @@ from next_of_kin.models import NextOfKin
 class NextOfKinTests(TestCase):
     def setUp(self):
         """Set up test data."""
-        self.user = CustomUser.objects.create(
-            username='testuser',
+        self.users = CustomUser.objects.create(
             first_name='Test',
             last_name='User',
             email='test@example.com',
@@ -26,7 +25,7 @@ class NextOfKinTests(TestCase):
         )
 
         self.officer = PoliceOfficer.objects.create(
-            user_id=self.user,
+            user=self.users,
             rank='Sergeant',
             contact='1234567890',
             station_id=self.station,

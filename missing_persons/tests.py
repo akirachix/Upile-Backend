@@ -28,7 +28,7 @@ class MissingPersonTests(TestCase):
 
         # Create a PoliceOfficer instance
         self.officer = PoliceOfficer.objects.create(
-            user_id=self.user,  # Assign the CustomUser instance
+            user =self.user,  # Assign the CustomUser instance
             rank='Sergeant',
             contact='1234567890',
             station_id=self.police_station,  # Assign the PoliceStation instance
