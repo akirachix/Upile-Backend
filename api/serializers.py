@@ -24,7 +24,7 @@ class MinimalMissingPersonSerializer(serializers.ModelSerializer):
         """ Define which model this serializer is associated with"""
         model = MissingPerson
         """Include only specific fields ('first_name' and 'age') in the serialized output"""
-        fields = ["first_name","last_name","status", "age","location","gender","image","clothes_worn"]
+        fields = ["first_name","last_name","age","location","gender","image","clothes_worn"]
 
 
 
