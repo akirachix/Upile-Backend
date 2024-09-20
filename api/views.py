@@ -633,16 +633,14 @@ class MatchView(APIView):
     def match_records(self, missing_person, unidentified_body, threshold=3):
         # This method handles fuzzy matching between missing persons and unidentified bodies
         name_matches = find_near_matches(missing_person.first_name, unidentified_body.name, max_l_dist=threshold)
-        age_matches = abs(missing_person.age - unidentified_body.age) <= threshold
         gender_matches = missing_person.gender.lower() == unidentified_body.gender.lower()
         clothes_worn = find_near_matches(missing_person.clothes_worn, unidentified_body.clothes_worn, max_l_dist=threshold)
         # If any match occurs, return the match data
-        if name_matches or age_matches or clothes_worn or gender_matches:
+        if name_matches or clothes_worn or gender_matches:
             return {
                 'missing_person': MissingPersonSerializer(missing_person).data,
                 'unidentified_body': UnidentifiedBodySerializer(unidentified_body).data,
                 'name_match': bool(name_matches),
-                'age_match': age_matches,
                 'gender_match': gender_matches,
                 'clothes_worn': bool(clothes_worn)
             }
