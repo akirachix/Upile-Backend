@@ -28,6 +28,8 @@ SECRET_KEY = "django-insecure-0_*oa%3t^pml0^zga1+*2ac1=d$v!lf#jo0%w3y*fx!-=)=&e%
 DEBUG = True
 
 
+
+
 ALLOWED_HOSTS = ['*']
 
 
@@ -139,7 +141,8 @@ import os
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
