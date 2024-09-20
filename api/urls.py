@@ -30,8 +30,8 @@ urlpatterns = [
     path('mortuary_staff/', views.MortuaryStaffListView.as_view(), name='mortuary_staff_list_view'),
     path('mortuary_staff/<int:id>/', views.MortuaryStaffDetailView.as_view(), name='mortuary_staff_detail_view'),
     path('unidentified_bodies/', UnidentifiedBodyListView.as_view(), name='unidentified_body_list_view'),
-    path('unidentified_bodies/<int:pk>/', UnidentifiedBodyDetailView.as_view(), name='unidentified_body_detail_view'),
-    path('nextofkin/<int:pk>/', NextOfKinDetailView.as_view(), name='nextofkin-detail'),
+    path('unidentified_bodies/<int:id>/', UnidentifiedBodyDetailView.as_view(), name='unidentified_body_detail_view'),
+    path('nextofkin/<int:id>/', NextOfKinDetailView.as_view(), name='nextofkin-detail'),
     path('nextofkin/', NextOfKinListView.as_view(), name='nextofkin-list'),
     path('matches/', MatchView.as_view(), name='matches'),
 
