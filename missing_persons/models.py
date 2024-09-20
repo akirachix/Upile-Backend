@@ -37,7 +37,6 @@ class MissingPerson(models.Model):
     height = models.FloatField()
     weight = models.FloatField()
     hair_color = models.CharField(max_length=50)
-    status = models.CharField(max_length=50, choices=STATUS, default='Missing')
     eye_color = models.CharField(max_length=50, choices=EYE_COLOR_CHOICES, default='black')
     skin_color = models.CharField(max_length=50, choices=SKIN_COLOR_CHOICES, default='dark_skinned')
     missing_date = models.DateField()
