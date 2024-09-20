@@ -20,6 +20,12 @@ class MissingPerson(models.Model):
         ('brown', 'Brown')
     ]
 
+    STATUS = [
+        ('missing', 'Missing'),
+        ('found', 'Found'),
+        ('departed','Departed')
+    ]
+
     id = models.AutoField(primary_key=True)
     officer_id = models.ForeignKey(PoliceOfficer, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50)
