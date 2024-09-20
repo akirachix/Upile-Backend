@@ -113,6 +113,5 @@ class MatchSerializer(serializers.Serializer):
     missing_person = serializers.CharField()
     unidentified_body = serializers.CharField()
     name_match = serializers.BooleanField()
-    age_match = serializers.BooleanField()
     clothes_worn = serializers.BooleanField()
     gender= serializers.BooleanField()
