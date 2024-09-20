@@ -24,7 +24,7 @@ class MinimalMissingPersonSerializer(serializers.ModelSerializer):
         """ Define which model this serializer is associated with"""
         model = MissingPerson
         """Include only specific fields ('first_name' and 'age') in the serialized output"""
-        fields = ["first_name","last_name", "age"]
+        fields = ["first_name","last_name", "age","location","gender","image","clothes_worn"]
 
 
 
@@ -89,11 +89,6 @@ class NextOfKinSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextOfKin  
         fields = '__all__'  
-
-class UnidentifiedBodySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UnidentifiedBody  
-        fields = "__all__"  
   
 
 """Serializer for the NextOfKin model & UnidentifiedBody model"""
@@ -105,11 +100,20 @@ class NextOfKinSerializer(serializers.ModelSerializer):
 class UnidentifiedBodySerializer(serializers.ModelSerializer):
     class Meta:
         model = UnidentifiedBody  
-        fields = "__all__"  
+        fields = '__all__'
+
+class MinimalUnidentifiedBodySerializer(serializers.ModelSerializer):
+    class Meta:
+        """ Define which model this serializer is associated with"""
+        model = UnidentifiedBody
+        """Include only specific fields in the serialized output"""
+        fields = ["id","gender", "reporting_date"]
 
 class MatchSerializer(serializers.Serializer):
     missing_person = serializers.CharField()
     unidentified_body = serializers.CharField()
-    name_match = serializers.BooleanField()
+    first_name_match = serializers.BooleanField()
+    last_name_match = serializers.BooleanField()
     age_match = serializers.BooleanField()
-    description_match = serializers.BooleanField()
+    clothes_worn = serializers.BooleanField()
+    gender= serializers.BooleanField()
