@@ -33,7 +33,7 @@ class MissingPerson(models.Model):
     age = models.SmallIntegerField()
     gender = models.CharField(max_length=50, choices=GENDER_CHOICES, default='other')
     contact = models.CharField(max_length=50)
-    image = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='missing_persons_images/')
     height = models.FloatField()
     weight = models.FloatField()
     hair_color = models.CharField(max_length=50)
