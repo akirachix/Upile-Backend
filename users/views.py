@@ -159,45 +159,47 @@ def user_register(request, length=6):
     username = request.data.get("username")
 
 
-    existing_user = CustomUser.objects.filter(email=email, username=username)
-    if existing_user:
-        return Response({"message":"User already exists"})
-    else:
-        user = CustomUser.objects.create(
-            username = username,
-            first_name=first_name,
-            last_name=last_name,
-            role=role,
-            phone_number=phone_number,
-            email=email,
-            
+    if CustomUser.objects.filter(phone_number=phone_number).exists():
+        return Response({"message":"Phone number already exists"})
+    if CustomUser.objects.filter(username=username).exists():
+        return Response({"message":"Username already exists"})
+    
+    
+    user = CustomUser.objects.create(
+        username = username,
+        first_name=first_name,
+        last_name=last_name,
+        role=role,
+        phone_number=phone_number,
+        email=email,
+        
+    )
+
+    short_code = generate_short_code(role)
+
+    code = RegistrationCode.objects.create(
+        user=user,
+        code=short_code,
+        created_at=timezone.now(),
+    )
+
+    subject = "Your Registration Code"
+    message = f"Your registration code is {short_code}."
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [email]  # Ensure this is a list of strings
+
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+        return Response(
+            {"message": "Verification code sent successfully."},
+            status=status.HTTP_200_OK,
         )
-
-        short_code = generate_short_code(role)
-
-        code = RegistrationCode.objects.create(
-            user=user,
-            code=short_code,
-            created_at=timezone.now(),
+    except Exception as e:
+        logger.error(f"Failed to send email: {e}")
+        return Response(
+            {"error": f"Failed to send email: {e}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-        subject = "Your Registration Code"
-        message = f"Your registration code is {short_code}."
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [email]  # Ensure this is a list of strings
-
-        try:
-            send_mail(subject, message, from_email, recipient_list)
-            return Response(
-                {"message": "Verification code sent successfully."},
-                status=status.HTTP_200_OK,
-            )
-        except Exception as e:
-            logger.error(f"Failed to send email: {e}")
-            return Response(
-                {"error": f"Failed to send email: {e}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
 
 
 """API for verifying the email verification code"""
