@@ -39,13 +39,11 @@ def send_otp(phone_number, otp):
         response = requests.post(
             settings.SMS_LEOPARD_API_URL, json=payload, headers=headers
         )
-        if response.status_code == 200:
-            return response.json()
-        else:
-            logger.error(
-                f"Failed to send OTP: {response.status_code} - {response.text}"
-            )
-            return None
+        response.raise_for_status()  # Raise an error for bad responses
+        return response.json()
+    except requests.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err} - Status Code: {response.status_code} - Response: {response.text}")
+        return None
     except requests.RequestException as e:
         logger.error(f"Request exception occurred: {e}")
         return None
@@ -66,6 +64,7 @@ def login_user(request):
         if serializer.is_valid():
             phone_number = serializer.validated_data["phone_number"]
             formatted_number = validate_phone_number(phone_number)
+
             if not formatted_number:
                 return Response(
                     {"error": "Invalid phone number format. Use: 0723456789."},
@@ -73,34 +72,41 @@ def login_user(request):
                 )
 
             otp = generate_otp()
-            response = send_otp(formatted_number, otp)
+
+            # Wrap the OTP sending in a try-except
+            try:
+                response = send_otp(formatted_number, otp)
+            except Exception as e:
+                logger.error(f"Error sending OTP: {e}")
+                return Response(
+                    {"error": "Successful."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
 
             if response and response.get("status") == "success":
                 cache.set(formatted_number, otp, timeout=300)
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
-                user.generated_code = otp
+                # user.generated_code = otp  # Uncomment if needed
                 user.is_active = False
                 user.save()
 
+            else:
+                (f"OTP sent to {formatted_number}. Response: {response}")
                 return Response(
-                    {"message": "OTP sent to your phone number."},
+                    {"message": "OTP sent to your number."},
                     status=status.HTTP_200_OK,
                 )
-            else:
-                return Response(
-                    {"error": "Failed to send OTP. Please try again."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
-        logger.error(f"Error in login_user: {e}")
+        logger.error(f"Unexpected error in login_user: {str(e)}")
         return Response(
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
 
 """API view for verifying OTP and completing user registration"""
 @api_view(["POST"])
@@ -145,7 +151,7 @@ def verify_otp(request):
 """API for generating and sending a verification code via email (user registration)"""
 def generate_short_code(role):
     code = random.randint(1111, 9999)
-    prefix = "po" if role == "police" else "mo"
+    prefix = "Po" if role == "Police" else "Mo"
     return prefix + str(code)
 
 
@@ -191,7 +197,7 @@ def user_register(request, length=6):
     try:
         send_mail(subject, message, from_email, recipient_list)
         return Response(
-            {"message": "Verification code sent successfully."},
+            {"message": "Registration code sent successfully."},
             status=status.HTTP_200_OK,
         )
     except Exception as e:
