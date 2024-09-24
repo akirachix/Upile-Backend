@@ -197,7 +197,7 @@ class MissingPersonDetailView(APIView):
                 return Response({"error": "Name query parameter is required for search."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    def put(self, request, id):
+    def patch(self, request, id):
         """Update a specific missing person record by ID."""
         try:
             missing_person = get_object_or_404(MissingPerson, id=id)
