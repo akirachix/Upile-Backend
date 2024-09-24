@@ -55,6 +55,46 @@ class MissingPersonListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class MissingPersonDetailView(APIView):
+    def get(self, request, id=None):
+        """Retrieve a specific missing person by ID or search by name."""
+        if id:
+            # Handle retrieval by ID
+            try:
+                missing_person = get_object_or_404(MissingPerson, id=id)
+                serializer = MissingPersonSerializer(missing_person)
+                return Response(serializer.data)
+            except Exception as e:
+                logger.error(f"Error retrieving missing person with ID {id}: {e}")
+                return Response({"error": "An error occurred while retrieving the missing person."}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # Handle search by name
+            name = request.query_params.get('name', None)
+            if name:
+                try:
+                    missing_persons = MissingPerson.objects.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name))
+                    serializer = MissingPersonSerializer(missing_persons, many=True)
+                    return Response(serializer.data)
+                except Exception as e:
+                    logger.error(f"Error searching missing persons by name '{name}': {e}")
+                    return Response({"error": "An error occurred while searching for missing persons."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({"error": "Name query parameter is required for search."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def put(self, request, id):
+        """Update a specific missing person record by ID."""
+        try:
+            missing_person = get_object_or_404(MissingPerson, id=id)
+            serializer = MissingPersonSerializer(missing_person, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Error updating missing person with ID {id}: {e}")
+            return Response({"error": "Failed to update missing person."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -169,46 +209,6 @@ class PoliceStationListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class MissingPersonDetailView(APIView):
-    def get(self, request, id=None):
-        """Retrieve a specific missing person by ID or search by name."""
-        if id:
-            # Handle retrieval by ID
-            try:
-                missing_person = get_object_or_404(MissingPerson, id=id)
-                serializer = MissingPersonSerializer(missing_person)
-                return Response(serializer.data)
-            except Exception as e:
-                logger.error(f"Error retrieving missing person with ID {id}: {e}")
-                return Response({"error": "An error occurred while retrieving the missing person."}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            # Handle search by name
-            name = request.query_params.get('name', None)
-            if name:
-                try:
-                    missing_persons = MissingPerson.objects.filter(Q(first_name__icontains=name) | Q(last_name__icontains=name))
-                    serializer = MissingPersonSerializer(missing_persons, many=True)
-                    return Response(serializer.data)
-                except Exception as e:
-                    logger.error(f"Error searching missing persons by name '{name}': {e}")
-                    return Response({"error": "An error occurred while searching for missing persons."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            else:
-                return Response({"error": "Name query parameter is required for search."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-    def patch(self, request, id):
-        """Update a specific missing person record by ID."""
-        try:
-            missing_person = get_object_or_404(MissingPerson, id=id)
-            serializer = MissingPersonSerializer(missing_person, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            logger.error(f"Error updating missing person with ID {id}: {e}")
-            return Response({"error": "Failed to update missing person."}, status=status.HTTP_400_BAD_REQUEST)
 
 
     
