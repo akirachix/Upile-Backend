@@ -84,7 +84,7 @@ def login_user(request):
                 )
 
             if response and response.get("status") == "success":
-                cache.set(formatted_number, otp, timeout=300)
+                cache.set(formatted_number, otp, timeout=30000)
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
