@@ -84,17 +84,26 @@ class MissingPersonDetailView(APIView):
 
 
     def put(self, request, id):
-        """Update a specific missing person record by ID."""
         try:
             missing_person = get_object_or_404(MissingPerson, id=id)
             serializer = MissingPersonSerializer(missing_person, data=request.data)
+            
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({
+                "error": "Validation failed",
+                "details": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
         except Exception as e:
             logger.error(f"Error updating missing person with ID {id}: {e}")
-            return Response({"error": "Failed to update missing person."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "error": "Failed to update missing person.",
+                "details": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
