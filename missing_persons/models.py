@@ -1,6 +1,14 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+import os
 from police.models import PoliceOfficer
+
+def validate_image_format(image):
+    ext = os.path.splitext(image.name)[1].lower()
+    valid_extensions = ['.jpg', '.jpeg', '.png']
+    
+    if ext not in valid_extensions:
+        raise ValidationError(f'Unsupported file extension: {ext}. Allowed extensions are: .jpg, .jpeg, .png.')
 
 class MissingPerson(models.Model):
     """Attributes for the missing persons added by the police officers"""
@@ -23,7 +31,7 @@ class MissingPerson(models.Model):
     STATUS = [
         ('missing', 'Missing'),
         ('found', 'Found'),
-        ('departed','Departed')
+        ('departed', 'Departed')
     ]
 
     id = models.AutoField(primary_key=True)
@@ -33,9 +41,10 @@ class MissingPerson(models.Model):
     age = models.SmallIntegerField()
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='other')
     contact = models.CharField(max_length=20)
-    image = models.ImageField(upload_to='missing_persons_images/')
+    image = models.ImageField(upload_to='missing_persons_images/', validators=[validate_image_format])
     height = models.FloatField()
     weight = models.FloatField()
+    status = models.CharField(max_length=20, choices=STATUS, default='missing')
     hair_color = models.CharField(max_length=20)
     eye_color = models.CharField(max_length=20, choices=EYE_COLOR_CHOICES, default='black')
     skin_color = models.CharField(max_length=20, choices=SKIN_COLOR_CHOICES, default='dark_skinned')
@@ -44,19 +53,20 @@ class MissingPerson(models.Model):
     clothes_worn = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self):
-        # Return the full name of the missing person
+        
         return f"{self.first_name} {self.last_name}"
 
     def clean(self):
-        # Ensure first_name is not just whitespace
+        
         if not self.first_name.strip():
             raise ValidationError('First name cannot be blank or whitespace')
 
-        # Additional validations
+        
         if self.age < 0:
             raise ValidationError('Age cannot be negative')
 
     def save(self, *args, **kwargs):
-        self.clean()  # Ensure custom validation is applied
+        self.clean()  
         super().save(*args, **kwargs)
