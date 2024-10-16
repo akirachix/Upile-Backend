@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -70,11 +70,13 @@ MIDDLEWARE = [
 
 ]
 
+# TEMPLATE_DIR = os.path.join(BASE_DIR,/'templates')
+
 ROOT_URLCONF = "lostlocate.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -137,9 +139,10 @@ USE_TZ = True
 
 
 # import dj_database_url
-import os
+
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+STATICFILES_DIRS = [BASE_DIR / "static"]
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -153,7 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SMS Leopard Configuration
 
-import os
+# import os
 import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
