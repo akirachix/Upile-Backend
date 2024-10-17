@@ -47,6 +47,7 @@ class MissingPersonTests(TestCase):
             'image': 'path/to/image.jpg',
             'height': 175.5,
             'weight': 70.0,
+            'status':'missing',
             'hair_color': 'brown',
             'eye_color': 'blue',
             'skin_color': 'light_skinned',
@@ -66,6 +67,7 @@ class MissingPersonTests(TestCase):
         self.assertEqual(missing_person.image, 'path/to/image.jpg')
         self.assertEqual(missing_person.height, 175.5)
         self.assertEqual(missing_person.weight, 70.0)
+        self.assertEqual(missing_person.status, 'missing')
         self.assertEqual(missing_person.hair_color, 'brown')
         self.assertEqual(missing_person.eye_color, 'blue')
         self.assertEqual(missing_person.skin_color, 'light_skinned')
