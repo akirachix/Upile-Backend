@@ -12,7 +12,13 @@ from django.contrib.auth import authenticate, login
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.template.exceptions import TemplateDoesNotExist
+from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.conf import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -151,12 +157,12 @@ def verify_otp(request):
 """API for generating and sending a verification code via email (user registration)"""
 def generate_short_code(role):
     code = random.randint(1111, 9999)
-    prefix = "Po" if role == "Police" else "Mo"
+    prefix = "Po" if role == "Police Officer" else "Mo"
     return prefix + str(code)
 
 
 @api_view(["POST"])
-def user_register(request, length=6):
+def user_register(request):
     first_name = request.data.get("first_name")
     last_name = request.data.get("last_name")
     role = request.data.get("role")
@@ -164,21 +170,20 @@ def user_register(request, length=6):
     email = request.data.get("email")
     username = request.data.get("username")
 
-
+  
     if CustomUser.objects.filter(phone_number=phone_number).exists():
-        return Response({"message":"Phone number already exists"})
+        return Response({"message": "Phone number already exists"}, status=status.HTTP_400_BAD_REQUEST)
     if CustomUser.objects.filter(username=username).exists():
-        return Response({"message":"Username already exists"})
+        return Response({"message": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+  
     user = CustomUser.objects.create(
-        username = username,
+        username=username,
         first_name=first_name,
         last_name=last_name,
         role=role,
         phone_number=phone_number,
         email=email,
-        
     )
 
     short_code = generate_short_code(role)
@@ -189,13 +194,25 @@ def user_register(request, length=6):
         created_at=timezone.now(),
     )
 
+  
     subject = "Your Registration Code"
-    message = f"Your registration code is {short_code}."
+    context = {
+        'user_name': f"{first_name} {last_name}",
+        'registration_code': short_code,
+    }
+    
+   
+    html_message = render_to_string('registration_code.html', context) 
+    plain_message = strip_tags(html_message)  
     from_email = settings.EMAIL_HOST_USER
-    recipient_list = [email]  # Ensure this is a list of strings
+    recipient_list = [email]
 
+  
     try:
-        send_mail(subject, message, from_email, recipient_list)
+        email_message = EmailMultiAlternatives(subject, plain_message, from_email, recipient_list)
+        email_message.attach_alternative(html_message, "text/html") 
+        email_message.send()
+
         return Response(
             {"message": "Registration code sent successfully."},
             status=status.HTTP_200_OK,
@@ -206,7 +223,6 @@ def user_register(request, length=6):
             {"error": f"Failed to send email: {e}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
 
 """API for verifying the email verification code"""
 @api_view(["POST"])
@@ -247,5 +263,3 @@ def verify_code(request):
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-
