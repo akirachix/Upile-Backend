@@ -67,6 +67,11 @@ class MissingPerson(models.Model):
         if self.age < 0:
             raise ValidationError('Age cannot be negative')
 
+    # def save(self, *args, **kwargs):
+    #     self.clean()  
+    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
-        self.clean()  
+        self.full_clean()  
         super().save(*args, **kwargs)
+

@@ -141,8 +141,6 @@ USE_TZ = True
 # import dj_database_url
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
-STATICFILES_DIRS = [BASE_DIR / "static"]
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

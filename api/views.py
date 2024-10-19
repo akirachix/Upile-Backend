@@ -16,7 +16,8 @@ from .serializers import (
     UnidentifiedBodySerializer, MinimalUnidentifiedBodySerializer,
     NextOfKinSerializer,
     MissingPersonSerializer, MinimalMissingPersonSerializer,
-    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer,
+    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer, 
+    MinimalPostMissingPersonSerializer, MinimalPostUnidentifiedBodySerializer
 )
 from rest_framework.exceptions import NotFound
 from mortuary_staff.models import MortuaryStaff
@@ -50,7 +51,7 @@ class MissingPersonListView(APIView):
 
     def post(self, request):
         """Create a new missing person record."""
-        serializer = MissingPersonSerializer(data=request.data)
+        serializer = MinimalPostMissingPersonSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -199,6 +200,16 @@ class CustomUserDetailView(APIView):
             return Response(
                 {"error": "User not found."}, status=status.HTTP_404_NOT_FOUND
             )
+        
+class UsersListView(APIView):     
+    def get(self, request):
+        """Retrive users"""
+        users = CustomUser.objects.all()
+        total_users = CustomUser.objects.all().count()
+        serializer =CustomUserSerializer(users, many=True)
+        return Response({'total_users': total_users,
+            'users': serializer.data})
+
 
 
 # Create your views here.
@@ -401,7 +412,7 @@ class UnidentifiedBodyListView(APIView):
     def post(self, request):
         """Create a new unidentified body entry."""
         logger.info("Creating a new unidentified body entry.")
-        serializer = UnidentifiedBodySerializer(data=request.data)
+        serializer = MinimalPostUnidentifiedBodySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info("Unidentified body entry created successfully.")
