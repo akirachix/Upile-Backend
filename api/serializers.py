@@ -27,6 +27,13 @@ class MinimalMissingPersonSerializer(serializers.ModelSerializer):
         fields = ["id","first_name","last_name","age","location","gender","image","clothes_worn","missing_date","status"]
 
 
+class MinimalPostMissingPersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        """ Define which model this serializer is associated with"""
+        model = MissingPerson
+        """Include only specific fields ('first_name' and 'age') in the serialized output"""
+        fields = ["first_name","last_name","age", "location","gender","image","height", "weight", "hair_color", "eye_color", "missing_date", "clothes_worn","missing_date","status"]
+
 
 
 """Serializer for PoliceStation model"""
@@ -107,7 +114,16 @@ class MinimalUnidentifiedBodySerializer(serializers.ModelSerializer):
         """ Define which model this serializer is associated with"""
         model = UnidentifiedBody
         """Include only specific fields in the serialized output"""
-        fields = ["id","name","clothes_worn" ,"gender", "reporting_date"]
+        fields = ["name","clothes_worn" ,"gender", "reporting_date"]
+
+class MinimalPostUnidentifiedBodySerializer(serializers.ModelSerializer):
+    class Meta:
+        """ Define which model this serializer is associated with"""
+        model = UnidentifiedBody
+        """Include only specific fields in the serialized output"""
+        fields = ["name","location","height","height","body_marks","clothes_worn" , "hair_color","gender", "reporting_date"]
+
+
 
 class MatchSerializer(serializers.Serializer):
     missing_person = serializers.CharField()

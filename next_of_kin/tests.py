@@ -43,6 +43,7 @@ class NextOfKinTests(TestCase):
             image='path/to/image.jpg',
             height=175.5,
             weight=70.0,
+            status='missing',
             hair_color='brown',
             eye_color='blue',
             skin_color='light_skinned',
