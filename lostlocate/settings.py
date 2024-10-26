@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -70,11 +73,13 @@ MIDDLEWARE = [
 
 ]
 
+# TEMPLATE_DIR = os.path.join(BASE_DIR,/'templates')
+
 ROOT_URLCONF = "lostlocate.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -137,9 +142,8 @@ USE_TZ = True
 
 
 # import dj_database_url
-import os
+
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -153,7 +157,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # SMS Leopard Configuration
 
-import os
+# import os
 import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
@@ -169,10 +173,21 @@ if not os.getenv('DATABASE_URL'):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    },
+    'sms': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake-for-sms'  
+    }
+}
 
 # SMS Leopard Configuration
 SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL',"")
 SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN',"")
+SMS_CACHE_KEY = "sms_cache"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST',"")

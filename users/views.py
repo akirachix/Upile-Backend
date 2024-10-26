@@ -12,7 +12,16 @@ from django.contrib.auth import authenticate, login
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
+from django.template.exceptions import TemplateDoesNotExist
+from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.http.response import HttpResponse
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +65,7 @@ def validate_phone_number(phone_number):
     return None
 
 
-"""API view for registering a user and sending OTP to their phone number"""
+# Updated `login_user` view with consistent OTP cache key
 @api_view(["POST"])
 def login_user(request):
     try:
@@ -79,84 +88,144 @@ def login_user(request):
             except Exception as e:
                 logger.error(f"Error sending OTP: {e}")
                 return Response(
-                    {"error": "Successful."},
+                    {"error": "Failed to send otp"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
+            if response and response.get("success") == True:
+                # Store OTP in cache with consistent key
+                print(f"cache_otp_key::::{otp}::::")
+
             if response and response.get("status") == "success":
-                cache.set(formatted_number, otp, timeout=30000)
+                # Store OTP in cache with consistent key
+                cache.set(f"otp_{formatted_number}", otp, timeout=30000)
+
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
-                # user.generated_code = otp  # Uncomment if needed
                 user.is_active = False
                 user.save()
 
-            else:
-                (f"OTP sent to {formatted_number}. Response: {response}")
                 return Response(
                     {"message": "OTP sent to your number."},
                     status=status.HTTP_200_OK,
                 )
-
+            else:
+                return Response(
+                    {"message": "OTP sent to your number."},
+                    status=status.HTTP_200_OK,
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     except Exception as e:
         logger.error(f"Unexpected error in login_user: {str(e)}")
         return Response(
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    
 
-"""API view for verifying OTP and completing user registration"""
-@api_view(["POST"])
+
+@csrf_exempt
+def verify_sms_otp(request):
+    if request.method == 'POST':
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+                phone_number = data.get('mobile_no')
+                entered_otp = data.get('otp')
+            except json.JSONDecodeError:
+                return JsonResponse({"detail": "Invalid JSON"}, status=400)
+        else:
+            phone_number = request.POST.get('mobile_no')
+            entered_otp = request.POST.get('otp')
+        if not phone_number or not entered_otp:
+            return JsonResponse({"detail": "Please enter both the phone_number and otp"}, status=400)
+
+
+        # Use the same key format as in login_user to retrieve OTP
+        stored_otp = cache.get(settings.SMS_CACHE_KEY)
+        print(f"otp_cache_key{stored_otp}::::::entered otp {entered_otp}___")
+        if stored_otp:        
+            # Retrieve the stored OTP from cache
+
+            # Check if the entered OTP matches the cached OTP
+            if entered_otp == stored_otp:
+                # OTP verified successfully, reset cache for OTP
+                cache.delete(settings.SMS_CACHE_KEY)  # Optionally remove OTP from cache after verification
+                
+                # Retrieve the user and return a success message
+                user = CustomUser.objects.get(phone_number=phone_number)
+
+                return JsonResponse({
+                    "message": "OTP verified successfully",
+                    "customer": {
+                        "id": user.id,
+                        "generated_code": user.generated_code,
+                        "role": user.role,
+                        "phonenumber": user.phone_number,
+                        "username": user.username
+                    }
+                }, status=200)
+
+        else:
+            # No need for attempt counting; just return invalid OTP response
+            return JsonResponse({"message": "Invalid OTP"}, status=400)
+
+    return JsonResponse({"message": "Invalid OTP"}, status=400)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.cache import cache
+
+
+@csrf_exempt
 def verify_otp(request):
-    try:
-        serializer = VerifyOtpSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data["phone_number"]
-            otp = serializer.validated_data["otp"]
+    if request.method == 'POST':
+        phone_number = request.POST.get('mobile_no')
+        entered_otp = request.POST.get('otp')
 
-            formatted_number = validate_phone_number(phone_number)
-            if not formatted_number:
-                return Response(
-                    {"error": "Invalid phone number format. Use: 0723456789."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        # Use the same key format as in login_user to retrieve OTP
+        otp_cache_key = f"otp_{phone_number}"
+        
+        # Retrieve the stored OTP from cache
+        stored_otp = cache.get(otp_cache_key)
 
-            cached_otp = cache.get(formatted_number)
-            if cached_otp and cached_otp == otp:
-                user = CustomUser.objects.get(phone_number=formatted_number)
-                user.is_active = True
-                user.save()
+        # Check if the entered OTP matches the cached OTP
+        if stored_otp and entered_otp == stored_otp:
+            # OTP verified successfully, reset cache for OTP
+            cache.delete(otp_cache_key)  # Optionally remove OTP from cache after verification
+            
+            # Retrieve the user and return a success message
+            user = CustomUser.objects.get(phone_number=phone_number)
 
-                return Response(
-                    {"message": "User registered successfully."},
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(
-                    {"error": "Invalid OTP or phone number."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        logger.error(f"Err0or in verify_otp: {e}")
-        return Response(
-            {"error": "An unexpected error occurred."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+            return JsonResponse({
+                "message": "OTP verified successfully",
+                "customer": {
+                    "id": user.id,
+                    "generated_code": user.generated_code,
+                    "role": user.role,
+                    "phonenumber": user.phone_number,
+                    "username": user.username
+                }
+            }, status=200)
+
+        else:
+            # No need for attempt counting; just return invalid OTP response
+            return JsonResponse({"detail": "Invalid OTP"}, status=400)
+
+    return JsonResponse({"detail": "Invalid request"}, status=400)
+
 
 
 """API for generating and sending a verification code via email (user registration)"""
 def generate_short_code(role):
     code = random.randint(1111, 9999)
-    prefix = "Po" if role == "Police" else "Mo"
+    prefix = "Po" if role == "Police Officer" else "Mo"
     return prefix + str(code)
 
 
 @api_view(["POST"])
-def user_register(request, length=6):
+def user_register(request):
     first_name = request.data.get("first_name")
     last_name = request.data.get("last_name")
     role = request.data.get("role")
@@ -164,21 +233,20 @@ def user_register(request, length=6):
     email = request.data.get("email")
     username = request.data.get("username")
 
-
+  
     if CustomUser.objects.filter(phone_number=phone_number).exists():
-        return Response({"message":"Phone number already exists"})
+        return Response({"message": "Phone number already exists"}, status=status.HTTP_400_BAD_REQUEST)
     if CustomUser.objects.filter(username=username).exists():
-        return Response({"message":"Username already exists"})
+        return Response({"message": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+  
     user = CustomUser.objects.create(
-        username = username,
+        username=username,
         first_name=first_name,
         last_name=last_name,
         role=role,
         phone_number=phone_number,
         email=email,
-        
     )
 
     short_code = generate_short_code(role)
@@ -189,13 +257,25 @@ def user_register(request, length=6):
         created_at=timezone.now(),
     )
 
+  
     subject = "Your Registration Code"
-    message = f"Your registration code is {short_code}."
+    context = {
+        'user_name': f"{first_name} {last_name}",
+        'registration_code': short_code,
+    }
+    
+   
+    html_message = render_to_string('registration_code.html', context) 
+    plain_message = strip_tags(html_message)  
     from_email = settings.EMAIL_HOST_USER
-    recipient_list = [email]  # Ensure this is a list of strings
+    recipient_list = [email]
 
+  
     try:
-        send_mail(subject, message, from_email, recipient_list)
+        email_message = EmailMultiAlternatives(subject, plain_message, from_email, recipient_list)
+        email_message.attach_alternative(html_message, "text/html") 
+        email_message.send()
+
         return Response(
             {"message": "Registration code sent successfully."},
             status=status.HTTP_200_OK,
@@ -206,7 +286,6 @@ def user_register(request, length=6):
             {"error": f"Failed to send email: {e}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
 
 """API for verifying the email verification code"""
 @api_view(["POST"])
@@ -247,5 +326,3 @@ def verify_code(request):
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-
