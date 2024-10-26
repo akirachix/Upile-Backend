@@ -45,7 +45,7 @@ class NextOfKinTests(TestCase):
             weight=70.0,
             status='missing',
             hair_color='brown',
-            eye_color='blue',
+            eye_color='brown',
             skin_color='light_skinned',
             missing_date=datetime.now(),
             location='Downtown',
