@@ -95,7 +95,11 @@ def login_user(request):
             if response and response.get("success") == True:
                 # Store OTP in cache with consistent key
                 print(f"cache_otp_key::::{otp}::::")
-                cache.set(settings.SMS_CACHE_KEY, otp, timeout=120)
+
+            if response and response.get("status") == "success":
+                # Store OTP in cache with consistent key
+                cache.set(f"otp_{formatted_number}", otp, timeout=30000)
+
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
@@ -119,6 +123,7 @@ def login_user(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     
+
 
 @csrf_exempt
 def verify_sms_otp(request):
@@ -167,6 +172,48 @@ def verify_sms_otp(request):
             return JsonResponse({"message": "Invalid OTP"}, status=400)
 
     return JsonResponse({"message": "Invalid OTP"}, status=400)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.cache import cache
+
+
+@csrf_exempt
+def verify_otp(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get('mobile_no')
+        entered_otp = request.POST.get('otp')
+
+        # Use the same key format as in login_user to retrieve OTP
+        otp_cache_key = f"otp_{phone_number}"
+        
+        # Retrieve the stored OTP from cache
+        stored_otp = cache.get(otp_cache_key)
+
+        # Check if the entered OTP matches the cached OTP
+        if stored_otp and entered_otp == stored_otp:
+            # OTP verified successfully, reset cache for OTP
+            cache.delete(otp_cache_key)  # Optionally remove OTP from cache after verification
+            
+            # Retrieve the user and return a success message
+            user = CustomUser.objects.get(phone_number=phone_number)
+
+            return JsonResponse({
+                "message": "OTP verified successfully",
+                "customer": {
+                    "id": user.id,
+                    "generated_code": user.generated_code,
+                    "role": user.role,
+                    "phonenumber": user.phone_number,
+                    "username": user.username
+                }
+            }, status=200)
+
+        else:
+            # No need for attempt counting; just return invalid OTP response
+            return JsonResponse({"detail": "Invalid OTP"}, status=400)
+
+    return JsonResponse({"detail": "Invalid request"}, status=400)
 
 
 
