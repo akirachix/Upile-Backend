@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -170,10 +173,21 @@ if not os.getenv('DATABASE_URL'):
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    },
+    'sms': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake-for-sms'  
+    }
+}
 
 # SMS Leopard Configuration
 SMS_LEOPARD_API_URL = os.environ.get('SMS_LEOPARD_API_URL',"")
 SMS_LEOPARD_ACCESS_TOKEN = os.environ.get('SMS_LEOPARD_ACCESS_TOKEN',"")
+SMS_CACHE_KEY = "sms_cache"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST',"")
