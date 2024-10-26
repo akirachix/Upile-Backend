@@ -62,7 +62,7 @@ def validate_phone_number(phone_number):
     return None
 
 
-"""API view for registering a user and sending OTP to their phone number"""
+# Updated `login_user` view with consistent OTP cache key
 @api_view(["POST"])
 def login_user(request):
     try:
@@ -85,73 +85,80 @@ def login_user(request):
             except Exception as e:
                 logger.error(f"Error sending OTP: {e}")
                 return Response(
-                    {"error": "Successful."},
+                    {"error": "Failed to send otp"},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
             if response and response.get("status") == "success":
-                cache.set(formatted_number, otp, timeout=30000)
+                # Store OTP in cache with consistent key
+                cache.set(f"otp_{formatted_number}", otp, timeout=30000)
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
-                # user.generated_code = otp  # Uncomment if needed
                 user.is_active = False
                 user.save()
 
-            else:
-                (f"OTP sent to {formatted_number}. Response: {response}")
                 return Response(
                     {"message": "OTP sent to your number."},
                     status=status.HTTP_200_OK,
                 )
-
+            else:
+                return Response(
+                    {"message": "OTP sent to your number."},
+                    status=status.HTTP_200_OK,
+                )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     except Exception as e:
         logger.error(f"Unexpected error in login_user: {str(e)}")
         return Response(
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.cache import cache
 
-"""API view for verifying OTP and completing user registration"""
-@api_view(["POST"])
+
+@csrf_exempt
 def verify_otp(request):
-    try:
-        serializer = VerifyOtpSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data["phone_number"]
-            otp = serializer.validated_data["otp"]
+    if request.method == 'POST':
+        phone_number = request.POST.get('mobile_no')
+        entered_otp = request.POST.get('otp')
 
-            formatted_number = validate_phone_number(phone_number)
-            if not formatted_number:
-                return Response(
-                    {"error": "Invalid phone number format. Use: 0723456789."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        # Use the same key format as in login_user to retrieve OTP
+        otp_cache_key = f"otp_{phone_number}"
+        
+        # Retrieve the stored OTP from cache
+        stored_otp = cache.get(otp_cache_key)
 
-            cached_otp = cache.get(formatted_number)
-            if cached_otp and cached_otp == otp:
-                user = CustomUser.objects.get(phone_number=formatted_number)
-                user.is_active = True
-                user.save()
+        # Check if the entered OTP matches the cached OTP
+        if stored_otp and entered_otp == stored_otp:
+            # OTP verified successfully, reset cache for OTP
+            cache.delete(otp_cache_key)  # Optionally remove OTP from cache after verification
+            
+            # Retrieve the user and return a success message
+            user = CustomUser.objects.get(phone_number=phone_number)
 
-                return Response(
-                    {"message": "User registered successfully."},
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(
-                    {"error": "Invalid OTP or phone number."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        logger.error(f"Err0or in verify_otp: {e}")
-        return Response(
-            {"error": "An unexpected error occurred."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+            return JsonResponse({
+                "message": "OTP verified successfully",
+                "customer": {
+                    "id": user.id,
+                    "generated_code": user.generated_code,
+                    "role": user.role,
+                    "phonenumber": user.phone_number,
+                    "username": user.username
+                }
+            }, status=200)
+
+        else:
+            # No need for attempt counting; just return invalid OTP response
+            return JsonResponse({"detail": "Invalid OTP"}, status=400)
+
+    return JsonResponse({"detail": "Invalid request"}, status=400)
+
+
+
 
 
 """API for generating and sending a verification code via email (user registration)"""
