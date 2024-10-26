@@ -18,7 +18,10 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.http.response import HttpResponse
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -89,8 +92,10 @@ def login_user(request):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
-            if response and response.get("status") == "success":
-                cache.set(formatted_number, otp, timeout=30000)
+            if response and response.get("success") == True:
+                # Store OTP in cache with consistent key
+                print(f"cache_otp_key::::{otp}::::")
+                cache.set(settings.SMS_CACHE_KEY, otp, timeout=120)
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
@@ -113,45 +118,58 @@ def login_user(request):
             {"error": "An unexpected error occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+    
 
-"""API view for verifying OTP and completing user registration"""
-@api_view(["POST"])
-def verify_otp(request):
-    try:
-        serializer = VerifyOtpSerializer(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data["phone_number"]
-            otp = serializer.validated_data["otp"]
 
-            formatted_number = validate_phone_number(phone_number)
-            if not formatted_number:
-                return Response(
-                    {"error": "Invalid phone number format. Use: 0723456789."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
-            cached_otp = cache.get(formatted_number)
-            if cached_otp and cached_otp == otp:
-                user = CustomUser.objects.get(phone_number=formatted_number)
-                user.is_active = True
-                user.save()
+@csrf_exempt
+def verify_sms_otp(request):
+    if request.method == 'POST':
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body)
+                phone_number = data.get('mobile_no')
+                entered_otp = data.get('otp')
+            except json.JSONDecodeError:
+                return JsonResponse({"detail": "Invalid JSON"}, status=400)
+        else:
+            phone_number = request.POST.get('mobile_no')
+            entered_otp = request.POST.get('otp')
+        if not phone_number or not entered_otp:
+            return JsonResponse({"detail": "Please enter both the phone_number and otp"}, status=400)
 
-                return Response(
-                    {"message": "User registered successfully."},
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(
-                    {"error": "Invalid OTP or phone number."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        logger.error(f"Err0or in verify_otp: {e}")
-        return Response(
-            {"error": "An unexpected error occurred."},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
+
+        # Use the same key format as in login_user to retrieve OTP
+        stored_otp = cache.get(settings.SMS_CACHE_KEY)
+        print(f"otp_cache_key{stored_otp}::::::entered otp {entered_otp}___")
+        if stored_otp:        
+            # Retrieve the stored OTP from cache
+
+            # Check if the entered OTP matches the cached OTP
+            if entered_otp == stored_otp:
+                # OTP verified successfully, reset cache for OTP
+                cache.delete(settings.SMS_CACHE_KEY)  # Optionally remove OTP from cache after verification
+                
+                # Retrieve the user and return a success message
+                user = CustomUser.objects.get(phone_number=phone_number)
+
+                return JsonResponse({
+                    "message": "OTP verified successfully",
+                    "customer": {
+                        "id": user.id,
+                        "generated_code": user.generated_code,
+                        "role": user.role,
+                        "phonenumber": user.phone_number,
+                        "username": user.username
+                    }
+                }, status=200)
+
+        else:
+            # No need for attempt counting; just return invalid OTP response
+            return JsonResponse({"message": "Invalid OTP"}, status=400)
+
+    return JsonResponse({"message": "Invalid OTP"}, status=400)
+
 
 
 """API for generating and sending a verification code via email (user registration)"""
