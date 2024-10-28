@@ -16,8 +16,7 @@ from .serializers import (
     UnidentifiedBodySerializer, MinimalUnidentifiedBodySerializer,
     NextOfKinSerializer,
     MissingPersonSerializer, MinimalMissingPersonSerializer,
-    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer, 
-    MinimalPostMissingPersonSerializer, MinimalPostUnidentifiedBodySerializer
+    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer
 )
 from rest_framework.exceptions import NotFound
 from mortuary_staff.models import MortuaryStaff
@@ -51,7 +50,7 @@ class MissingPersonListView(APIView):
 
     def post(self, request):
         """Create a new missing person record."""
-        serializer = MinimalPostMissingPersonSerializer(data=request.data)
+        serializer = MissingPersonSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -412,7 +411,7 @@ class UnidentifiedBodyListView(APIView):
     def post(self, request):
         """Create a new unidentified body entry."""
         logger.info("Creating a new unidentified body entry.")
-        serializer = MinimalPostUnidentifiedBodySerializer(data=request.data)
+        serializer = UnidentifiedBodySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info("Unidentified body entry created successfully.")

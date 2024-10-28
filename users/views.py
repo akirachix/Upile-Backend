@@ -96,6 +96,7 @@ def login_user(request):
                 # Store OTP in cache with consistent key
                 print(f"cache_otp_key::::{otp}::::")
                 cache.set(settings.SMS_CACHE_KEY, otp, timeout=120)
+                
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number
                 )
