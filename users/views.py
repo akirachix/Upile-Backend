@@ -82,9 +82,12 @@ def login_user(request):
 
             otp = generate_otp()
 
+            print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{otp}$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+
             # Wrap the OTP sending in a try-except
             try:
                 response = send_otp(formatted_number, otp)
+                print(f"@@@@@@@@@@@@@@@@@@{response}@@@@@@@@@@@@@@@@@@")
             except Exception as e:
                 logger.error(f"Error sending OTP: {e}")
                 return Response(
@@ -96,9 +99,10 @@ def login_user(request):
                 # Store OTP in cache with consistent key
                 print(f"cache_otp_key::::{otp}::::")
 
-            if response and response.get("status") == "success":
-                # Store OTP in cache with consistent key
-                cache.set(f"otp_{formatted_number}", otp, timeout=30000)
+          
+                one = cache.set(settings.SMS_CACHE_KEY, otp, timeout=300)
+                print(f"$$$$$$$$$$$$$$$$$$$${one}%%%%%%%%%%%%%%%%%%%%%%%5")
+
 
                 user, created = CustomUser.objects.get_or_create(
                     phone_number=formatted_number

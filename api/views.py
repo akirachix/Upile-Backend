@@ -16,8 +16,7 @@ from .serializers import (
     UnidentifiedBodySerializer, MinimalUnidentifiedBodySerializer,
     NextOfKinSerializer,
     MissingPersonSerializer, MinimalMissingPersonSerializer,
-    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer, 
-    MinimalPostMissingPersonSerializer, MinimalPostUnidentifiedBodySerializer
+    MortuaryStaffSerializer, MinimalMortuaryStaffSerializer
 )
 from rest_framework.exceptions import NotFound
 from mortuary_staff.models import MortuaryStaff
@@ -51,7 +50,7 @@ class MissingPersonListView(APIView):
 
     def post(self, request):
         """Create a new missing person record."""
-        serializer = MinimalPostMissingPersonSerializer(data=request.data)
+        serializer = MissingPersonSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -412,7 +411,7 @@ class UnidentifiedBodyListView(APIView):
     def post(self, request):
         """Create a new unidentified body entry."""
         logger.info("Creating a new unidentified body entry.")
-        serializer = MinimalPostUnidentifiedBodySerializer(data=request.data)
+        serializer = UnidentifiedBodySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             logger.info("Unidentified body entry created successfully.")
@@ -655,13 +654,17 @@ class MatchView(APIView):
         name_matches = find_near_matches(missing_person.first_name, unidentified_body.name, max_l_dist=threshold)
         gender_matches = missing_person.gender.lower() == unidentified_body.gender.lower()
         clothes_worn = find_near_matches(missing_person.clothes_worn, unidentified_body.clothes_worn, max_l_dist=threshold)
+        location = find_near_matches(missing_person.location, unidentified_body.location, max_l_dist=threshold)
+        date_reported = missing_person.missing_date == unidentified_body.reporting_date
         # If any match occurs, return the match data
-        if name_matches or clothes_worn or gender_matches:
+        if name_matches or clothes_worn or gender_matches or location or date_reported:
             return {
                 'missing_person': MissingPersonSerializer(missing_person).data,
                 'unidentified_body': UnidentifiedBodySerializer(unidentified_body).data,
                 'name_match': bool(name_matches),
                 'gender_match': gender_matches,
-                'clothes_worn': bool(clothes_worn)
+                'clothes_worn': bool(clothes_worn),
+                'location': bool(location),
+                'date_reported': bool(date_reported)
             }
         return None
