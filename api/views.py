@@ -654,13 +654,17 @@ class MatchView(APIView):
         name_matches = find_near_matches(missing_person.first_name, unidentified_body.name, max_l_dist=threshold)
         gender_matches = missing_person.gender.lower() == unidentified_body.gender.lower()
         clothes_worn = find_near_matches(missing_person.clothes_worn, unidentified_body.clothes_worn, max_l_dist=threshold)
+        location = find_near_matches(missing_person.location, unidentified_body.location, max_l_dist=threshold)
+        date_reported = missing_person.missing_date == unidentified_body.reporting_date
         # If any match occurs, return the match data
-        if name_matches or clothes_worn or gender_matches:
+        if name_matches or clothes_worn or gender_matches or location or date_reported:
             return {
                 'missing_person': MissingPersonSerializer(missing_person).data,
                 'unidentified_body': UnidentifiedBodySerializer(unidentified_body).data,
                 'name_match': bool(name_matches),
                 'gender_match': gender_matches,
-                'clothes_worn': bool(clothes_worn)
+                'clothes_worn': bool(clothes_worn),
+                'location': bool(location),
+                'date_reported': bool(date_reported)
             }
         return None

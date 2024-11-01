@@ -115,3 +115,6 @@ class MatchSerializer(serializers.Serializer):
     name_match = serializers.BooleanField()
     clothes_worn = serializers.BooleanField()
     gender= serializers.BooleanField()
+    location= serializers.BooleanField()
+    date_reported= serializers.BooleanField()
+    

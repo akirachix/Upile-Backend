@@ -1,27 +1,18 @@
 from django.db import models
-from django.utils import timezone 
-from mortuary_staff.models import MortuaryStaff  
+from django.utils import timezone
+from mortuary_staff.models import MortuaryStaff
 
-# Create your models here.
-
+def get_default_staff():
+    return MortuaryStaff.objects.first()
 
 class UnidentifiedBody(models.Model):
-    """
-    Model representing an unidentified body in a mortuary context. 
-    This class includes fields for storing essential details such as 
-    the body’s ID, name, gender, location of discovery, physical attributes 
-    (skin color, weight, height, hair color), distinguishing features, 
-    clothing, and reporting information. It is designed to facilitate 
-    the management and identification process of unidentified bodies, 
-    with a potential link to mortuary staff for further processing.
-    """
     SKIN_COLOR_CHOICES = [
         ('light_skinned', 'Light Skinned'),
         ('dark_skinned', 'Dark Skinned')
     ]
 
     id = models.AutoField(primary_key=True)  
-    staff_id = models.ForeignKey(MortuaryStaff, on_delete=models.CASCADE)  
+    staff_id = models.ForeignKey(MortuaryStaff, on_delete=models.CASCADE, default=get_default_staff)  
     name = models.CharField(max_length=50)  
     gender = models.CharField(max_length=50)  
     location = models.CharField(max_length=50)  
@@ -29,7 +20,7 @@ class UnidentifiedBody(models.Model):
     weight = models.FloatField()  
     height = models.FloatField()  
     body_marks = models.TextField()  
-    reporting_date = models.DateTimeField()  
+    reporting_date = models.DateField()  
     clothes_worn = models.TextField()  
     hair_color = models.CharField(max_length=50) 
     created_at = models.DateTimeField(default=timezone.now) 
