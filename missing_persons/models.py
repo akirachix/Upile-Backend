@@ -45,7 +45,7 @@ class MissingPerson(models.Model):
     image = models.ImageField(upload_to='missing_persons_images/', validators=[validate_image_format])
     height = models.FloatField()
     weight = models.FloatField()
-    status = models.CharField(max_length=20, choices=STATUS, default='missing', blank=True)
+    status = models.CharField(max_length=20, choices=STATUS, default='missing')
     hair_color = models.CharField(max_length=20)
     eye_color = models.CharField(max_length=20, choices=EYE_COLOR_CHOICES, default='black')
     skin_color = models.CharField(max_length=20, choices=SKIN_COLOR_CHOICES, default='dark_skinned')
