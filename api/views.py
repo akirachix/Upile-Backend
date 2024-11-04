@@ -657,7 +657,7 @@ class MatchView(APIView):
         location = find_near_matches(missing_person.location, unidentified_body.location, max_l_dist=threshold)
         date_reported = missing_person.missing_date == unidentified_body.reporting_date
         # If any match occurs, return the match data
-        if name_matches or clothes_worn or gender_matches or location or date_reported:
+        if name_matches or date_reported and clothes_worn and gender_matches and location:
             return {
                 'missing_person': MissingPersonSerializer(missing_person).data,
                 'unidentified_body': UnidentifiedBodySerializer(unidentified_body).data,
