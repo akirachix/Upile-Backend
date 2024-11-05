@@ -106,7 +106,7 @@ class MinimalUnidentifiedBodySerializer(serializers.ModelSerializer):
         """ Define which model this serializer is associated with"""
         model = UnidentifiedBody
         """Include only specific fields in the serialized output"""
-        fields = ["name","clothes_worn" ,"gender", "reporting_date"]
+        fields = ["name","clothes_worn" ,"gender", "reporting_date", "location"]
 
 
 class MatchSerializer(serializers.Serializer):
